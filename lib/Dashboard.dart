@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_management_system/Home.dart';
+import 'package:school_management_system/utils/Clip.dart';
+import 'package:school_management_system/utils/theme.dart';
+import 'package:sizer/sizer.dart';
 import 'CustomWidget/DashboardTile.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -8,29 +12,37 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[10],
+      backgroundColor: Colors.grey.shade200,
       body: Stack(
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
+          // Positioned(
+          //   top: 0,
+          //   left: 0,
+          //   right: 0,
+          //   child: Container(
+          //     height: 280,
+          //     decoration: BoxDecoration(
+          //       color: PRIMARY_COLOR,
+          //       borderRadius: BorderRadius.only(
+          //         bottomLeft: Radius.circular(70),
+          //         bottomRight: Radius.circular(70),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          ClipPath(
+            clipper: BlueBackgroundClipper(),
             child: Container(
-              height: 280,
-              decoration: BoxDecoration(
-                color: PRIMARY_COLOR,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(70),
-                  bottomRight: Radius.circular(70),
-                ),
-              ),
+              color: ColorTheme().PRIMARY_COLOR,
+              height: 300,
             ),
           ),
           // Content
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 115.0, left: 16, right: 16),
+                padding: const EdgeInsets.only(top: 100.0, left: 16, right: 16),
                 child: Center(
                   child: Text(
                     "School Management System",
@@ -42,11 +54,16 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 40), // Adjusted for spacing
+              Padding(
+                padding: EdgeInsets.only(left: 4.pt),
+                child: Text("Naimish R. Vadodariya",style: TextStyle(fontSize: 20.sp,
+                  color: Colors.white70),),
+              ),
+              SizedBox(height: 5.h), // Adjusted for spacing
               // Dashboard Grid
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: GridView.count(
                     crossAxisCount: 3,
                     mainAxisSpacing: 8,
@@ -54,64 +71,64 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       DashboardTile(
                         icon: Icons.calendar_today,
-                        label: "Academic Calendar",
+                        label: "RR Distribution",
                         primaryColor: PRIMARY_COLOR,
                       ),
                       DashboardTile(
-                        icon: Icons.schedule,
-                        label: "Timetable",
+                        icon: Icons.record_voice_over_rounded,
+                        label: "Seminar Conduct",
                         primaryColor: PRIMARY_COLOR,
                       ),
                       DashboardTile(
-                        icon: Icons.check_circle_outline,
-                        label: "Attendance",
+                        icon: Icons.school,
+                        label: "School Visit",
                         primaryColor: PRIMARY_COLOR,
                       ),
-                      DashboardTile(
-                        icon: Icons.book,
-                        label: "LMS",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.directions_bus,
-                        label: "Transport",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.assignment,
-                        label: "Exam Schedule",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.grade,
-                        label: "Results",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.money,
-                        label: "Fees",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.feedback,
-                        label: "Feedback",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.analytics,
-                        label: "LMS Test Result",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.people,
-                        label: "Mentoring",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
-                      DashboardTile(
-                        icon: Icons.gavel,
-                        label: "Punishment",
-                        primaryColor: PRIMARY_COLOR,
-                      ),
+                      // DashboardTile(
+                      //   icon: Icons.book,
+                      //   label: "LMS",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.directions_bus,
+                      //   label: "Transport",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.assignment,
+                      //   label: "Exam Schedule",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.grade,
+                      //   label: "Results",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.money,
+                      //   label: "Fees",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.feedback,
+                      //   label: "Feedback",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.analytics,
+                      //   label: "LMS Test Result",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.people,
+                      //   label: "Mentoring",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
+                      // DashboardTile(
+                      //   icon: Icons.gavel,
+                      //   label: "Punishment",
+                      //   primaryColor: PRIMARY_COLOR,
+                      // ),
                     ],
                   ),
                 ),
@@ -119,9 +136,11 @@ class DashboardScreen extends StatelessWidget {
               // Footer
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "App Version: 1.0",
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                child: Center(
+                  child: Text(
+                    "App Version: 1.0",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
                 ),
               ),
             ],

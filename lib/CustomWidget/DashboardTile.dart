@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_management_system/utils/theme.dart';
 
 class DashboardTile extends StatelessWidget {
   final IconData icon;
@@ -16,7 +17,7 @@ class DashboardTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -28,7 +29,7 @@ class DashboardTile extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 32, color: primaryColor),
+          Icon(icon, size: 32, color: ColorTheme().PRIMARY_COLOR),
           SizedBox(height: 8),
           Text(
             label,
