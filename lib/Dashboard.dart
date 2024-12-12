@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_management_system/Home.dart';
+import 'package:school_management_system/RR_Distribution.dart';
 import 'package:school_management_system/utils/Clip.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
@@ -69,10 +70,13 @@ class DashboardScreen extends StatelessWidget {
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8,
                     children: [
-                      DashboardTile(
-                        icon: Icons.calendar_today,
-                        label: "RR Distribution",
-                        primaryColor: PRIMARY_COLOR,
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => RR_Distribution(),)),
+                        child: DashboardTile(
+                          icon: Icons.calendar_today,
+                          label: "RR Distribution",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
                       ),
                       DashboardTile(
                         icon: Icons.record_voice_over_rounded,

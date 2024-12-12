@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_management_system/Home.dart';
+import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
 import 'Dashboard.dart';
@@ -20,7 +21,12 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
-            // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            scaffoldBackgroundColor: Colors.grey.shade200,
+            appBarTheme: AppBarTheme(
+              color: ColorTheme().PRIMARY_COLOR,
+              titleTextStyle: TextStyle(color: Colors.white,fontSize: 19.sp),
+              iconTheme: IconThemeData(color: Colors.white,)
+            ),
             useMaterial3: true,
           ),
           // home: Home(),
