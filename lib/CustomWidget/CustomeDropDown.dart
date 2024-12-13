@@ -15,7 +15,7 @@ class CustomeDropdown extends StatefulWidget {
 class _CustomeDropdownState extends State<CustomeDropdown> {
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown(
+    return CustomDropdown.search(
       closedHeaderPadding: EdgeInsets.symmetric(horizontal: 11.sp,vertical: 13.sp),
       decoration: CustomDropdownDecoration(
           closedBorderRadius: BorderRadius.circular(5),
