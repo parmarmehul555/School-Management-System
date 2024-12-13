@@ -1,5 +1,7 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_swipe_action_cell/core/cell.dart';
+import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
 import 'package:sizer/sizer.dart';
 
 class RR_Distribution extends StatefulWidget {
@@ -17,6 +19,7 @@ class RowItem {
 class _RR_DistributionState extends State<RR_Distribution> {
   TextEditingController datePickerController = TextEditingController();
   String radioButtonValue = "YES";
+  String dropdownValue = "";
 
   // List to hold rows
   List<RowItem> rowItems = [RowItem()];
@@ -31,12 +34,14 @@ class _RR_DistributionState extends State<RR_Distribution> {
   }
 
   List<String> purposeList = ["First", "Second", "Third", "Forth"];
+  SingleSelectController dropdownvalue1 = SingleSelectController("First");
+  SingleSelectController dropdownvalue2 = SingleSelectController("First");
+  SingleSelectController dropdownvalue3 = SingleSelectController("First");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back_ios_new),
         title: Text("RR Distribution"),
       ),
       body: Padding(
@@ -50,6 +55,8 @@ class _RR_DistributionState extends State<RR_Distribution> {
                 controller: datePickerController,
                 readOnly: true,
                 decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                  alignLabelWithHint: true,
                   prefixIcon: Icon(Icons.date_range),
                   isDense: true,
                   border: OutlineInputBorder(),
@@ -58,42 +65,18 @@ class _RR_DistributionState extends State<RR_Distribution> {
               ),
             ),
             SizedBox(
-              height: 1.h,
+              height: 0.5.h,
             ),
-            CustomDropdown(
-              decoration: CustomDropdownDecoration(
-                  closedBorderRadius: BorderRadius.circular(5),
-                  closedBorder: Border.all(width: 1)),
-              items: purposeList,
-              hintText: "Select Purpose",
-              onChanged: (p0) {},
-            ),
+            CustomeDropdown(list: purposeList,dropdownTitle:"Select Purpose",dropdownValue: dropdownvalue1,),
+            CustomeDropdown(list: purposeList,dropdownTitle:"Select School",dropdownValue: dropdownvalue2,),
+            CustomeDropdown(list: purposeList,dropdownTitle:"Select Reason",dropdownValue: dropdownvalue3,),
+
             SizedBox(
-              height: 1.h,
+              height: 0.1.h,
             ),
-            CustomDropdown(
-              decoration: CustomDropdownDecoration(
-                  closedBorderRadius: BorderRadius.circular(5),
-                  closedBorder: Border.all(width: 1)),
-              items: purposeList,
-              hintText: "Select School",
-              onChanged: (p0) {},
-            ),
+
             SizedBox(
-              height: 1.h,
-            ),
-            CustomDropdown(
-              decoration: CustomDropdownDecoration(
-                  closedBorderRadius: BorderRadius.circular(5),
-                  closedBorder: Border.all(width: 1),
-                  listItemDecoration:
-                      ListItemDecoration(highlightColor: Colors.grey)),
-              items: purposeList,
-              hintText: "Select Reason",
-              onChanged: (p0) {},
-            ),
-            SizedBox(
-              height: 1.h,
+              height: 0.1.h,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,7 +118,13 @@ class _RR_DistributionState extends State<RR_Distribution> {
                   hintText: "Enter total number of copies",
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(),
+                  hintStyle: TextStyle(
+                    fontSize: 14,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  alignLabelWithHint: true,
                 ),
+                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
               ),
             ),
             ListView.builder(
@@ -145,27 +134,65 @@ class _RR_DistributionState extends State<RR_Distribution> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(top: 2.0.pt),
-                  child: Row(
+                  child:  rowItems.length > 1 ? SwipeActionCell(
+                    key: ObjectKey(rowItems[index]),
+                    trailingActions: <SwipeAction>[
+                      SwipeAction(
+                          performsFirstActionWithFullSwipe: true,
+                          title: "Delete",
+                          onTap: (CompletionHandler handler) async {
+                            rowItems.removeAt(index);
+                            setState(() {});
+                          },
+                          color: Colors.red),
+                    ],
+                    child: Row(
+                      children: [
+                        // Dropdown
+                        Expanded(
+                          flex: 1,
+                          child: CustomeDropdown(list: purposeList,dropdownTitle: "Std.",dropdownValue: dropdownvalue1,),
+                        ),
+                        SizedBox(width: 8),
+                        // TextFormField for number input
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            color: Colors.white,
+                            child: TextFormField(
+                              controller: rowItems[index].numberController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                isDense: true, // Makes the TextField more compact
+                                hintText: "Enter number",
+                                hintStyle: TextStyle(fontSize: 14), // Adjusts the font size of the hint text
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(), // Defines the border when focused
+                                contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0), // Adjust padding to control height
+                                alignLabelWithHint: true, // Aligns the label with the hint text
+                              ),
+                            ),
+
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        // + Button
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              rowItems.insert(index + 1, RowItem());
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ) : Row(
                     children: [
                       // Dropdown
                       Expanded(
                         flex: 1,
-                        child: CustomDropdown(
-                          decoration: CustomDropdownDecoration(
-                              closedBorderRadius: BorderRadius.circular(5),
-                              closedBorder: Border.all(width: 1),
-                              listItemDecoration: ListItemDecoration(
-                                highlightColor: Colors.grey,
-                              ),
-                              hintStyle: TextStyle(fontSize: 16.sp)),
-                          items: purposeeList,
-                          hintText: "Std.",
-                          onChanged: (value) {
-                            setState(() {
-                              rowItems[index].dropdownValue = value;
-                            });
-                          },
-                        ),
+                        child: CustomeDropdown(list: purposeList,dropdownTitle: "Std.",dropdownValue: dropdownvalue1,),
                       ),
                       SizedBox(width: 8),
                       // TextFormField for number input
@@ -177,10 +204,16 @@ class _RR_DistributionState extends State<RR_Distribution> {
                             controller: rowItems[index].numberController,
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              border: OutlineInputBorder(),
+                              isDense: true, // Makes the TextField more compact
                               hintText: "Enter number",
+                              hintStyle: TextStyle(fontSize: 14), // Adjusts the font size of the hint text
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(), // Defines the border when focused
+                              contentPadding: EdgeInsets.symmetric(vertical: 13.0.sp, horizontal: 13.0.sp), // Adjust padding to control height
+                              alignLabelWithHint: true, // Aligns the label with the hint text
                             ),
                           ),
+
                         ),
                       ),
                       SizedBox(width: 8),
@@ -199,7 +232,11 @@ class _RR_DistributionState extends State<RR_Distribution> {
               },
             ),
             SizedBox(height: 1.h,),
-            ElevatedButton(onPressed: () {}, child: Text("Save"))
+            ElevatedButton(onPressed: () {
+              print("Value from Dropdown is ${dropdownvalue1.value}");
+              print("Value from Dropdown is ${dropdownvalue2.value}");
+              print("Value from Dropdown is ${dropdownvalue3.value}");
+            }, child: Text("Save"))
           ],
         ),
       ),
