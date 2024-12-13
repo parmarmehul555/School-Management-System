@@ -6,7 +6,7 @@ class CustomeDropdown extends StatefulWidget {
   List<String> list;
   String? dropdownTitle;
   SingleSelectController? dropdownValue;
-  CustomeDropdown({required this.list,required this.dropdownValue,required this.dropdownTitle});
+  CustomeDropdown({required this.list,required this.dropdownValue,required this.dropdownTitle,dynamic Function(String?)? onChanged});
 
   @override
   State<CustomeDropdown> createState() => _CustomeDropdownState();

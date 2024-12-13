@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:school_management_system/Home.dart';
+import 'package:school_management_system/Pending_Remuneration.dart';
 import 'package:school_management_system/RR_Distribution.dart';
+import 'package:school_management_system/Remuneration.dart';
+import 'package:school_management_system/Seminar_Conduct.dart';
 import 'package:school_management_system/utils/Clip.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
@@ -78,15 +81,36 @@ class DashboardScreen extends StatelessWidget {
                           primaryColor: PRIMARY_COLOR,
                         ),
                       ),
-                      DashboardTile(
-                        icon: Icons.record_voice_over_rounded,
-                        label: "Seminar Conduct",
-                        primaryColor: PRIMARY_COLOR,
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Seminar_Conduct(),)),
+                        child: DashboardTile(
+                          icon: Icons.record_voice_over_rounded,
+                          label: "Seminar Conduct",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
                       ),
-                      DashboardTile(
-                        icon: Icons.school,
-                        label: "School Visit",
-                        primaryColor: PRIMARY_COLOR,
+                      GestureDetector(
+                        child: DashboardTile(
+                          icon: Icons.school,
+                          label: "School Visit",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Remuneration(),)),
+                        child: DashboardTile(
+                          icon: Icons.monetization_on_outlined,
+                          label: "Remuneration",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Pending_Remuneration(),)),
+                        child: DashboardTile(
+                          icon: Icons.pending_actions,
+                          label: "Pending Remuneration",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
                       ),
                       // DashboardTile(
                       //   icon: Icons.book,
