@@ -244,7 +244,6 @@ class _RR_DistributionState extends State<RR_Distribution> {
   }
 
   Future<void> showDateDialog() async {
-    print("hellpw frpm funtion");
     DateTime? selectedDate = await showDatePicker(
       context: context,
       firstDate: DateTime(2000),

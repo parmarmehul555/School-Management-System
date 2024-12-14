@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
 import 'package:sizer/sizer.dart';
 
-class Seminar_Conduct extends StatefulWidget{
+class Seminar_Conduct extends StatefulWidget {
   @override
   State<Seminar_Conduct> createState() => _Seminar_ConductState();
 }
 
 class RowItem {
   String? dropdownValue;
-  TextEditingController numberController = TextEditingController();
 }
 
 class _Seminar_ConductState extends State<Seminar_Conduct> {
@@ -54,7 +54,8 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                 controller: datePickerController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                   alignLabelWithHint: true,
                   prefixIcon: Icon(Icons.date_range),
                   isDense: true,
@@ -66,10 +67,26 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             SizedBox(
               height: 0.5.h,
             ),
-            CustomeDropdown(list: speakerList,dropdownTitle:"Topic",dropdownValue: dropdownvalue1,),
-            CustomeDropdown(list: speakerList,dropdownTitle:"Speaker1",dropdownValue: dropdownvalue2,),
-            CustomeDropdown(list: speakerList,dropdownTitle:"Speaker2",dropdownValue: dropdownvalue3,),
-            CustomeDropdown(list: speakerList,dropdownTitle:"School",dropdownValue: dropdownvalue4,),
+            CustomeDropdown(
+              list: speakerList,
+              dropdownTitle: "Topic",
+              dropdownValue: dropdownvalue1,
+            ),
+            CustomeDropdown(
+              list: speakerList,
+              dropdownTitle: "Speaker1",
+              dropdownValue: dropdownvalue2,
+            ),
+            CustomeDropdown(
+              list: speakerList,
+              dropdownTitle: "Speaker2",
+              dropdownValue: dropdownvalue3,
+            ),
+            CustomeDropdown(
+              list: speakerList,
+              dropdownTitle: "School",
+              dropdownValue: dropdownvalue4,
+            ),
 
             SizedBox(
               height: 0.1.h,
@@ -87,9 +104,70 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                 ),
               ],
             ),
-            CustomeDropdown(list: speakerList,dropdownTitle:"member1",dropdownValue: dropdownvalue5,),
-            CustomeDropdown(list: speakerList,dropdownTitle:"member2",dropdownValue: dropdownvalue6,),
-            CustomeDropdown(list: speakerList,dropdownTitle:"member3",dropdownValue: dropdownvalue7,),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: rowItems.length,
+              itemBuilder: (context, index) {
+                return rowItems.length > 1
+                    ? SwipeActionCell(
+                        key: ObjectKey(rowItems[index]),
+                        trailingActions: <SwipeAction>[
+                          SwipeAction(
+                              performsFirstActionWithFullSwipe: true,
+                              title: "Delete",
+                              onTap: (CompletionHandler handler) async {
+                                rowItems.removeAt(index);
+                                setState(() {});
+                              },
+                              color: Colors.red),
+                        ],
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                  child: CustomeDropdown(
+                                list: speakerList,
+                                dropdownTitle: "Member ${index + 1}",
+                                dropdownValue: dropdownvalue5,
+                              )),
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    rowItems.insert(index + 1, RowItem());
+                                  });
+                                },
+                                icon: Icon(Icons.add))
+                          ],
+                        ),
+                      )
+                    : Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                                child: CustomeDropdown(
+                              list: speakerList,
+                              dropdownTitle: "Member ${index + 1}",
+                              dropdownValue: dropdownvalue5,
+                            )),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  rowItems.insert(index + 1, RowItem());
+                                });
+                              },
+                              icon: Icon(Icons.add))
+                        ],
+                      );
+              },
+            ),
+            // CustomeDropdown(list: speakerList,dropdownTitle:"member1",dropdownValue: dropdownvalue5,),
+            // CustomeDropdown(list: speakerList,dropdownTitle:"member2",dropdownValue: dropdownvalue6,),
+            // CustomeDropdown(list: speakerList,dropdownTitle:"member3",dropdownValue: dropdownvalue7,),
             Container(
               color: Colors.white,
               child: TextFormField(
@@ -102,13 +180,17 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                   hintStyle: TextStyle(
                     fontSize: 14,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   alignLabelWithHint: true,
                 ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
               ),
             ),
-            SizedBox(height: 1.h,),
+            SizedBox(
+              height: 0.3.h,
+            ),
             Container(
               color: Colors.white,
               child: TextFormField(
@@ -121,11 +203,16 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                   hintStyle: TextStyle(
                     fontSize: 14,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   alignLabelWithHint: true,
                 ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
               ),
+            ),
+            SizedBox(
+              height: 0.3.h,
             ),
             Container(
               color: Colors.white,
@@ -139,11 +226,16 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                   hintStyle: TextStyle(
                     fontSize: 14,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   alignLabelWithHint: true,
                 ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
               ),
+            ),
+            SizedBox(
+              height: 0.3.h,
             ),
             Container(
               color: Colors.white,
@@ -157,11 +249,16 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                   hintStyle: TextStyle(
                     fontSize: 14,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   alignLabelWithHint: true,
                 ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
               ),
+            ),
+            SizedBox(
+              height: 0.3.h,
             ),
             Container(
               color: Colors.white,
@@ -175,17 +272,24 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                   hintStyle: TextStyle(
                     fontSize: 14,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   alignLabelWithHint: true,
                 ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
               ),
             ),
-            ElevatedButton(onPressed: () {
-              print("Value from Dropdown is ${dropdownvalue1.value}");
-              print("Value from Dropdown is ${dropdownvalue2.value}");
-              print("Value from Dropdown is ${dropdownvalue3.value}");
-            }, child: Text("Save"))
+            SizedBox(
+              height: 0.3.h,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  print("Value from Dropdown is ${dropdownvalue1.value}");
+                  print("Value from Dropdown is ${dropdownvalue2.value}");
+                  print("Value from Dropdown is ${dropdownvalue3.value}");
+                },
+                child: Text("Save"))
           ],
         ),
       ),

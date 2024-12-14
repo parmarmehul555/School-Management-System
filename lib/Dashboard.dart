@@ -19,21 +19,6 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: Colors.grey.shade200,
       body: Stack(
         children: [
-          // Positioned(
-          //   top: 0,
-          //   left: 0,
-          //   right: 0,
-          //   child: Container(
-          //     height: 280,
-          //     decoration: BoxDecoration(
-          //       color: PRIMARY_COLOR,
-          //       borderRadius: BorderRadius.only(
-          //         bottomLeft: Radius.circular(70),
-          //         bottomRight: Radius.circular(70),
-          //       ),
-          //     ),
-          //   ),
-          // ),
           ClipPath(
             clipper: BlueBackgroundClipper(),
             child: Container(
