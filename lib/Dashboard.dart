@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_management_system/Home.dart';
+import 'package:school_management_system/Paid_Remuneration.dart';
 import 'package:school_management_system/Pending_Remuneration.dart';
 import 'package:school_management_system/RR_Distribution.dart';
 import 'package:school_management_system/Remuneration.dart';
@@ -97,16 +97,19 @@ class DashboardScreen extends StatelessWidget {
                           primaryColor: PRIMARY_COLOR,
                         ),
                       ),
-                      // DashboardTile(
-                      //   icon: Icons.book,
-                      //   label: "LMS",
-                      //   primaryColor: PRIMARY_COLOR,
-                      // ),
-                      // DashboardTile(
-                      //   icon: Icons.directions_bus,
-                      //   label: "Transport",
-                      //   primaryColor: PRIMARY_COLOR,
-                      // ),
+                      DashboardTile(
+                        icon: Icons.browser_updated,
+                        label: "Update Contact",
+                        primaryColor: PRIMARY_COLOR,
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => PaidRemuneration(),)),
+                        child: DashboardTile(
+                          icon: Icons.payment,
+                          label: "Paid Remuneration",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
+                      ),
                       // DashboardTile(
                       //   icon: Icons.assignment,
                       //   label: "Exam Schedule",

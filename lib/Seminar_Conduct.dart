@@ -79,11 +79,6 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             ),
             CustomeDropdown(
               list: speakerList,
-              dropdownTitle: "Speaker2",
-              dropdownValue: dropdownvalue3,
-            ),
-            CustomeDropdown(
-              list: speakerList,
               dropdownTitle: "School",
               dropdownValue: dropdownvalue4,
             ),

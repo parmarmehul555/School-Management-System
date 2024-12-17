@@ -70,12 +70,6 @@ class Pending_Remuneration extends StatelessWidget{
             child: InkWell(
               onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Remuneration(),)),
               child: Card(
-                elevation: 5,
-                shadowColor: Colors.grey,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                color: Colors.white,
                 child: Padding(
                   padding: EdgeInsets.all(12.sp),
                   child: Column(
@@ -84,7 +78,7 @@ class Pending_Remuneration extends StatelessWidget{
                       Text('Title : ${list[index]["title"]}',style: TextStyle(fontSize: 17.sp),),
                       Text('Total : ${list[index]["total"]}',style: TextStyle(fontSize: 17.sp),),
                       Text('Paid : ${list[index]["paid"]}',style: TextStyle(fontSize: 17.sp,color: Colors.green,fontWeight: FontWeight.bold),),
-                      Text('Remaining : ${list[index]["remaining"]}',style: TextStyle(fontSize: 17.sp,color: Colors.red,fontWeight: FontWeight.bold),),
+                      Text('Remaining : ${list[index]["remaining"]}',style: TextStyle(fontSize: 17.sp,color: Colors.red,),),
                     ],
                   ),
                 ),
