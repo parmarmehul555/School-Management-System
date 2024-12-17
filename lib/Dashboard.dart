@@ -4,6 +4,7 @@ import 'package:school_management_system/Pending_Remuneration.dart';
 import 'package:school_management_system/RR_Distribution.dart';
 import 'package:school_management_system/Remuneration.dart';
 import 'package:school_management_system/Seminar_Conduct.dart';
+import 'package:school_management_system/Updata_Contact.dart';
 import 'package:school_management_system/utils/Clip.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
@@ -97,10 +98,13 @@ class DashboardScreen extends StatelessWidget {
                           primaryColor: PRIMARY_COLOR,
                         ),
                       ),
-                      DashboardTile(
-                        icon: Icons.browser_updated,
-                        label: "Update Contact",
-                        primaryColor: PRIMARY_COLOR,
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Updata_Contact(),)),
+                        child: DashboardTile(
+                          icon: Icons.browser_updated,
+                          label: "Update Contact",
+                          primaryColor: PRIMARY_COLOR,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => PaidRemuneration(),)),
