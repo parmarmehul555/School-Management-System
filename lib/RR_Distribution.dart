@@ -1,7 +1,10 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
+import 'package:school_management_system/API_Helper/Seminar.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
+import 'package:school_management_system/Models/SeminarDDL.dart';
+import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class RR_Distribution extends StatefulWidget {
@@ -17,23 +20,34 @@ class RowItem {
 }
 
 class _RR_DistributionState extends State<RR_Distribution> {
+  bool isLoading = true;
   TextEditingController datePickerController = TextEditingController();
   String radioButtonValue = "YES";
   String dropdownValue = "";
+  List<dynamic> purposeList = [];
 
   // List to hold rows
   List<RowItem> rowItems = [RowItem()];
 
   // List of dropdown items
-  List<String> purposeeList = ["10th", "12th-A", "12th-B"];
+  // List<String> purposeeList = ["10th", "12th-A", "12th-B"];
 
   @override
   void initState() {
-    // TODO: implement initState
+    // TODO: implement initStatecolor: ColorTheme().PRIMARY_COLOR,
+    _loadData();
+    print(purposeList);
     datePickerController.text = DateTime.now().toString();
   }
 
-  List<String> purposeList = ["First", "Second", "Third", "Forth"];
+  Future<void> _loadData() async {
+    var tempPurposeList = await Seminar().SeminarSelectForDDL()!;
+    setState(() {
+      purposeList = tempPurposeList;
+    });
+    isLoading = false;
+  }
+
   SingleSelectController dropdownvalue1 = SingleSelectController("First");
   SingleSelectController dropdownvalue2 = SingleSelectController("First");
   SingleSelectController dropdownvalue3 = SingleSelectController("First");
@@ -46,199 +60,248 @@ class _RR_DistributionState extends State<RR_Distribution> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-            Container(
-              color: Colors.white,
-              child: TextFormField(
-                onTap: showDateDialog,
-                controller: datePickerController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
-                  alignLabelWithHint: true,
-                  prefixIcon: Icon(Icons.date_range),
-                  isDense: true,
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 0.5.h,
-            ),
-            CustomeDropdown(list: purposeList,dropdownTitle:"Select Purpose",dropdownValue: dropdownvalue1,),
-            CustomeDropdown(list: purposeList,dropdownTitle:"Select School",dropdownValue: dropdownvalue2,),
-            CustomeDropdown(list: purposeList,dropdownTitle:"Select Reason",dropdownValue: dropdownvalue3,),
-
-            SizedBox(
-              height: 0.1.h,
-            ),
-
-            SizedBox(
-              height: 0.1.h,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Interested in campus visit ?",
-                  style: TextStyle(fontSize: 18.sp),
-                ),
-                Row(
-                  children: [
-                    RadioMenuButton(
-                        value: "YES",
-                        groupValue: radioButtonValue,
-                        onChanged: (value) {
-                          setState(() {
-                            radioButtonValue = value!;
-                          });
-                        },
-                        child: Text("YES")),
-                    RadioMenuButton(
-                        value: "NO",
-                        groupValue: radioButtonValue,
-                        onChanged: (value) {
-                          setState(() {
-                            radioButtonValue = value!;
-                          });
-                        },
-                        child: Text("NO")),
-                  ],
-                )
-              ],
-            ),
-            Container(
-              color: Colors.white,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: "Enter total number of copies",
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(),
-                  hintStyle: TextStyle(
-                    fontSize: 14,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-                  alignLabelWithHint: true,
-                ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: rowItems.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(top: 2.0.pt),
-                  child:  rowItems.length > 1 ? SwipeActionCell(
-                    key: ObjectKey(rowItems[index]),
-                    trailingActions: <SwipeAction>[
-                      SwipeAction(
-                          performsFirstActionWithFullSwipe: true,
-                          title: "Delete",
-                          onTap: (CompletionHandler handler) async {
-                            rowItems.removeAt(index);
-                            setState(() {});
-                          },
-                          color: Colors.red),
-                    ],
-                    child: Row(
-                      children: [
-                        // Dropdown
-                        Expanded(
-                          flex: 1,
-                          child: CustomeDropdown(list: purposeList,dropdownTitle: "Std.",dropdownValue: dropdownvalue1,),
-                        ),
-                        SizedBox(width: 8),
-                        // TextFormField for number input
-                        Expanded(
-                          flex: 2,
-                          child: Container(
-                            color: Colors.white,
-                            child: TextFormField(
-                              controller: rowItems[index].numberController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                isDense: true, // Makes the TextField more compact
-                                hintText: "Enter number",
-                                hintStyle: TextStyle(fontSize: 14), // Adjusts the font size of the hint text
-                                border: OutlineInputBorder(),
-                                focusedBorder: OutlineInputBorder(), // Defines the border when focused
-                                contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0), // Adjust padding to control height
-                                alignLabelWithHint: true, // Aligns the label with the hint text
-                              ),
-                            ),
-
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        // + Button
-                        IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            setState(() {
-                              rowItems.insert(index + 1, RowItem());
-                            });
-                          },
-                        ),
-                      ],
+        child: !isLoading
+            ? ListView(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    child: TextFormField(
+                      onTap: showDateDialog,
+                      controller: datePickerController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                        alignLabelWithHint: true,
+                        prefixIcon: Icon(Icons.date_range),
+                        isDense: true,
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(),
+                      ),
                     ),
-                  ) : Row(
+                  ),
+                  SizedBox(
+                    height: 0.5.h,
+                  ),
+                  CustomeDropdown(
+                    list: purposeList,
+                    dropdownTitle: "Select Purpose",
+                    dropdownValue: dropdownvalue1,
+                    targetDropdownValue: "SeminarTitle",
+                  ),
+                  CustomeDropdown(
+                    list: purposeList,
+                    dropdownTitle: "Select School",
+                    dropdownValue: dropdownvalue2,
+                    targetDropdownValue: "SeminarTitle",
+                  ),
+                  CustomeDropdown(
+                    list: purposeList,
+                    dropdownTitle: "Select Reason",
+                    dropdownValue: dropdownvalue3,
+                    targetDropdownValue: "SeminarTitle",
+                  ),
+                  SizedBox(
+                    height: 0.1.h,
+                  ),
+                  SizedBox(
+                    height: 0.1.h,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Dropdown
-                      Expanded(
-                        flex: 1,
-                        child: CustomeDropdown(list: purposeList,dropdownTitle: "Std.",dropdownValue: dropdownvalue1,),
+                      Text(
+                        "Interested in campus visit ?",
+                        style: TextStyle(fontSize: 18.sp),
                       ),
-                      SizedBox(width: 8),
-                      // TextFormField for number input
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          color: Colors.white,
-                          child: TextFormField(
-                            controller: rowItems[index].numberController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true, // Makes the TextField more compact
-                              hintText: "Enter number",
-                              hintStyle: TextStyle(fontSize: 14), // Adjusts the font size of the hint text
-                              border: OutlineInputBorder(),
-                              focusedBorder: OutlineInputBorder(), // Defines the border when focused
-                              contentPadding: EdgeInsets.symmetric(vertical: 13.0.sp, horizontal: 13.0.sp), // Adjust padding to control height
-                              alignLabelWithHint: true, // Aligns the label with the hint text
-                            ),
-                          ),
-
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      // + Button
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            rowItems.insert(index + 1, RowItem());
-                          });
-                        },
-                      ),
+                      Row(
+                        children: [
+                          RadioMenuButton(
+                              value: "YES",
+                              groupValue: radioButtonValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  radioButtonValue = value!;
+                                });
+                              },
+                              child: Text("YES")),
+                          RadioMenuButton(
+                              value: "NO",
+                              groupValue: radioButtonValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  radioButtonValue = value!;
+                                });
+                              },
+                              child: Text("NO")),
+                        ],
+                      )
                     ],
                   ),
-                );
-              },
-            ),
-            SizedBox(height: 1.h,),
-            ElevatedButton(onPressed: () {
-              print("Value from Dropdown is ${dropdownvalue1.value}");
-              print("Value from Dropdown is ${dropdownvalue2.value}");
-              print("Value from Dropdown is ${dropdownvalue3.value}");
-            }, child: Text("Save"))
-          ],
-        ),
+                  Container(
+                    color: Colors.white,
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: "Enter total number of copies",
+                        border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(),
+                        hintStyle: TextStyle(
+                          fontSize: 14,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        alignLabelWithHint: true,
+                      ),
+                      textAlignVertical: TextAlignVertical
+                          .center, // Ensures the text is vertically centered
+                    ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: rowItems.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 2.0.pt),
+                        child: rowItems.length > 1
+                            ? SwipeActionCell(
+                                key: ObjectKey(rowItems[index]),
+                                trailingActions: <SwipeAction>[
+                                  SwipeAction(
+                                      performsFirstActionWithFullSwipe: true,
+                                      title: "Delete",
+                                      onTap: (CompletionHandler handler) async {
+                                        rowItems.removeAt(index);
+                                        setState(() {});
+                                      },
+                                      color: Colors.red),
+                                ],
+                                child: Row(
+                                  children: [
+                                    // Dropdown
+                                    Expanded(
+                                      flex: 1,
+                                      child: CustomeDropdown(
+                                        list: purposeList,
+                                        dropdownTitle: "Std.",
+                                        dropdownValue: dropdownvalue1,
+                                        targetDropdownValue: "SeminarTitle",
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    // TextFormField for number input
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        color: Colors.white,
+                                        child: TextFormField(
+                                          controller:
+                                              rowItems[index].numberController,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            isDense: true,
+                                            // Makes the TextField more compact
+                                            hintText: "Enter number",
+                                            hintStyle: TextStyle(fontSize: 14),
+                                            // Adjusts the font size of the hint text
+                                            border: OutlineInputBorder(),
+                                            focusedBorder: OutlineInputBorder(),
+                                            // Defines the border when focused
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 8.0,
+                                                    horizontal: 8.0),
+                                            // Adjust padding to control height
+                                            alignLabelWithHint:
+                                                true, // Aligns the label with the hint text
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    // + Button
+                                    IconButton(
+                                      icon: Icon(Icons.add),
+                                      onPressed: () {
+                                        setState(() {
+                                          rowItems.insert(index + 1, RowItem());
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Row(
+                                children: [
+                                  // Dropdown
+                                  Expanded(
+                                    flex: 1,
+                                    child: CustomeDropdown(
+                                      list: purposeList,
+                                      dropdownTitle: "Std.",
+                                      dropdownValue: dropdownvalue1,
+                                      targetDropdownValue: "SeminarTitle",
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  // TextFormField for number input
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: TextFormField(
+                                        controller:
+                                            rowItems[index].numberController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          // Makes the TextField more compact
+                                          hintText: "Enter number",
+                                          hintStyle: TextStyle(fontSize: 14),
+                                          // Adjusts the font size of the hint text
+                                          border: OutlineInputBorder(),
+                                          focusedBorder: OutlineInputBorder(),
+                                          // Defines the border when focused
+                                          contentPadding: EdgeInsets.symmetric(
+                                              vertical: 13.0.sp,
+                                              horizontal: 13.0.sp),
+                                          // Adjust padding to control height
+                                          alignLabelWithHint:
+                                              true, // Aligns the label with the hint text
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  // + Button
+                                  IconButton(
+                                    icon: Icon(Icons.add),
+                                    onPressed: () {
+                                      setState(() {
+                                        rowItems.insert(index + 1, RowItem());
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        print("Value from Dropdown is ${dropdownvalue1.value}");
+                        print("Value from Dropdown is ${dropdownvalue2.value}");
+                        print("Value from Dropdown is ${dropdownvalue3.value}");
+                      },
+                      child: Text("Save"))
+                ],
+              )
+            : Center(child: CircularProgressIndicator(color: ColorTheme().PRIMARY_COLOR,)),
       ),
     );
   }

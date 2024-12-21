@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
+import 'package:school_management_system/API_Helper/Seminar.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
+import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
 class Seminar_Conduct extends StatefulWidget {
@@ -14,9 +16,11 @@ class RowItem {
 }
 
 class _Seminar_ConductState extends State<Seminar_Conduct> {
+  bool isLoading = true;
   TextEditingController datePickerController = TextEditingController();
   String radioButtonValue = "YES";
   String dropdownValue = "";
+  List<dynamic> seminarList = [];
 
   List<RowItem> rowItems = [RowItem()];
 
@@ -26,9 +30,18 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
   @override
   void initState() {
     datePickerController.text = DateTime.now().toString();
+    _loadData();
   }
 
-  List<String> speakerList = ["First", "Second", "Third", "Forth"];
+  Future<void> _loadData() async {
+    var tempPurposeList = await Seminar().SeminarSelectForDDL()!;
+    setState(() {
+      seminarList = tempPurposeList;
+    });
+    isLoading = false;
+  }
+
+  // List<String> seminarList = ["First", "Second", "Third", "Forth"];
   SingleSelectController dropdownvalue1 = SingleSelectController("First");
   SingleSelectController dropdownvalue2 = SingleSelectController("First");
   SingleSelectController dropdownvalue3 = SingleSelectController("First");
@@ -45,7 +58,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView(
+        child: !isLoading ?  ListView(
           children: [
             Container(
               color: Colors.white,
@@ -68,17 +81,18 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
               height: 0.5.h,
             ),
             CustomeDropdown(
-              list: speakerList,
+              list: seminarList,targetDropdownValue: "SeminarTitle",
               dropdownTitle: "Topic",
               dropdownValue: dropdownvalue1,
             ),
             CustomeDropdown(
-              list: speakerList,
+              list: seminarList,targetDropdownValue: "SeminarTitle",
               dropdownTitle: "Speaker1",
               dropdownValue: dropdownvalue2,
             ),
             CustomeDropdown(
-              list: speakerList,
+              list: seminarList
+              ,targetDropdownValue: "SeminarTitle",
               dropdownTitle: "School",
               dropdownValue: dropdownvalue4,
             ),
@@ -123,7 +137,8 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                               flex: 2,
                               child: Container(
                                   child: CustomeDropdown(
-                                list: speakerList,
+                                list: seminarList,
+                                targetDropdownValue: "SeminarTitle",
                                 dropdownTitle: "Member ${index + 1}",
                                 dropdownValue: dropdownvalue5,
                               )),
@@ -144,9 +159,10 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                             flex: 2,
                             child: Container(
                                 child: CustomeDropdown(
-                              list: speakerList,
+                              list: seminarList,
                               dropdownTitle: "Member ${index + 1}",
                               dropdownValue: dropdownvalue5,
+                              targetDropdownValue: "SeminarTitle",
                             )),
                           ),
                           IconButton(
@@ -160,9 +176,9 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                       );
               },
             ),
-            // CustomeDropdown(list: speakerList,dropdownTitle:"member1",dropdownValue: dropdownvalue5,),
-            // CustomeDropdown(list: speakerList,dropdownTitle:"member2",dropdownValue: dropdownvalue6,),
-            // CustomeDropdown(list: speakerList,dropdownTitle:"member3",dropdownValue: dropdownvalue7,),
+            // CustomeDropdown(list: seminarList,dropdownTitle:"member1",dropdownValue: dropdownvalue5,),
+            // CustomeDropdown(list: seminarList,dropdownTitle:"member2",dropdownValue: dropdownvalue6,),
+            // CustomeDropdown(list: seminarList,dropdownTitle:"member3",dropdownValue: dropdownvalue7,),
             Container(
               color: Colors.white,
               child: TextFormField(
@@ -286,7 +302,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                 },
                 child: Text("Save"))
           ],
-        ),
+        ) : Center(child: CircularProgressIndicator(color: ColorTheme().PRIMARY_COLOR,)),
       ),
     );
   }

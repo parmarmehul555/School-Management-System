@@ -103,7 +103,7 @@ class _Updata_ContactState extends State<Updata_Contact> {
             CustomeDropdown(
               list: schoolList,
               dropdownTitle: "School",
-              dropdownValue: dropdownvalue1,
+              dropdownValue: dropdownvalue1,targetDropdownValue: "SeminarTitle",
             ),
             SizedBox(height: 1.h),
             if (!showDetailsContainer) ...[

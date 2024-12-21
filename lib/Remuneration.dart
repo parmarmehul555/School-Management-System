@@ -55,7 +55,7 @@ class _RemunerationState extends State<Remuneration> {
             SizedBox(
               height: 0.5.h,
             ),
-            CustomeDropdown(list: eventList,dropdownTitle:"Event",dropdownValue: dropdownvalue1,),
+            CustomeDropdown(list: eventList,targetDropdownValue: "SeminarTitle",dropdownTitle:"Event",dropdownValue: dropdownvalue1,),
 
             SizedBox(
               height: 0.1.h,
