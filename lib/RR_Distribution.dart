@@ -1,8 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
-import 'package:school_management_system/API_Helper/Seminar.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
+import 'package:school_management_system/DB_Helper/Seminar.dart';
 import 'package:school_management_system/Models/SeminarDDL.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
