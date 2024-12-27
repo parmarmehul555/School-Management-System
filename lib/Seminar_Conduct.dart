@@ -34,7 +34,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
   }
 
   Future<void> _loadData() async {
-    var tempPurposeList = await Seminar().SeminarSelectForDDL()!;
+    var tempPurposeList = await Seminar().seminarSelectForDDL()!;
     setState(() {
       seminarList = tempPurposeList;
     });

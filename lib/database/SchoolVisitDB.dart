@@ -7,17 +7,17 @@ import 'package:path/path.dart';
 class SchoolVisitDB{
   Future<Database> initDatabase() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String databasePath = join(appDocDir.path, 'SchoolVisite1.db');
+    String databasePath = join(appDocDir.path, 'SchoolVisit.db');
     return await openDatabase(databasePath);
   }
 
   Future<bool> copyPasteAssetFileToRoot() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "SchoolVisite1.db");
+    String path = join(documentsDirectory.path, "SchoolVisit.db");
 
     if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound) {
       ByteData data =
-      await rootBundle.load(join('assets/database', 'SchoolVisite1.db'));
+      await rootBundle.load(join('assets/database', 'SchoolVisit.db'));
       List<int> bytes =
       data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes);

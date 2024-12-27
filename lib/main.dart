@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_management_system/Login.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 

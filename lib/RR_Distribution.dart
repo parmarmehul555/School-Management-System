@@ -41,7 +41,7 @@ class _RR_DistributionState extends State<RR_Distribution> {
   }
 
   Future<void> _loadData() async {
-    var tempPurposeList = await Seminar().SeminarSelectForDDL()!;
+    var tempPurposeList = await Seminar().seminarSelectForDDL()!;
     setState(() {
       purposeList = tempPurposeList;
     });
