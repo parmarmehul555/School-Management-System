@@ -2,8 +2,10 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
+import 'package:school_management_system/DB_Helper/MST_Course.dart';
+import 'package:school_management_system/DB_Helper/Purpose.dart';
+import 'package:school_management_system/DB_Helper/School.dart';
 import 'package:school_management_system/DB_Helper/Seminar.dart';
-import 'package:school_management_system/Models/SeminarDDL.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
@@ -24,7 +26,10 @@ class _RR_DistributionState extends State<RR_Distribution> {
   TextEditingController datePickerController = TextEditingController();
   String radioButtonValue = "YES";
   String dropdownValue = "";
+  List<dynamic> reasonList = [];
   List<dynamic> purposeList = [];
+  List<dynamic> schoolList = [];
+  List<dynamic> courseList = [];
 
   // List to hold rows
   List<RowItem> rowItems = [RowItem()];
@@ -36,14 +41,20 @@ class _RR_DistributionState extends State<RR_Distribution> {
   void initState() {
     // TODO: implement initStatecolor: ColorTheme().PRIMARY_COLOR,
     _loadData();
-    print(purposeList);
+    print(reasonList);
     datePickerController.text = DateTime.now().toString();
   }
 
   Future<void> _loadData() async {
-    var tempPurposeList = await Seminar().seminarSelectForDDL()!;
+    var tempReasonList = await Seminar().seminarSelectForDDL()!;
+    var tempPurposeList = await Purpose().selectPurposeDDL();
+    var tempSchoolList = await School().selectSchoolDDL();
+    var tempCourseList = await MST_Course().selectCourseDDL();
     setState(() {
+      reasonList = tempReasonList;
       purposeList = tempPurposeList;
+      schoolList = tempSchoolList;
+      courseList = tempCourseList;
     });
     isLoading = false;
   }
@@ -87,16 +98,16 @@ class _RR_DistributionState extends State<RR_Distribution> {
                     list: purposeList,
                     dropdownTitle: "Select Purpose",
                     dropdownValue: dropdownvalue1,
-                    targetDropdownValue: "SeminarTitle",
+                    targetDropdownValue: "PurposeTitle",
                   ),
                   CustomeDropdown(
-                    list: purposeList,
+                    list: schoolList,
                     dropdownTitle: "Select School",
                     dropdownValue: dropdownvalue2,
-                    targetDropdownValue: "SeminarTitle",
+                    targetDropdownValue: "SchoolShortName",
                   ),
                   CustomeDropdown(
-                    list: purposeList,
+                    list: reasonList,
                     dropdownTitle: "Select Reason",
                     dropdownValue: dropdownvalue3,
                     targetDropdownValue: "SeminarTitle",
@@ -184,10 +195,10 @@ class _RR_DistributionState extends State<RR_Distribution> {
                                     Expanded(
                                       flex: 1,
                                       child: CustomeDropdown(
-                                        list: purposeList,
+                                        list: courseList,
                                         dropdownTitle: "Std.",
                                         dropdownValue: dropdownvalue1,
-                                        targetDropdownValue: "SeminarTitle",
+                                        targetDropdownValue: "CourseName",
                                       ),
                                     ),
                                     SizedBox(width: 8),
@@ -237,18 +248,18 @@ class _RR_DistributionState extends State<RR_Distribution> {
                                 children: [
                                   // Dropdown
                                   Expanded(
-                                    flex: 1,
+                                    flex: 2,
                                     child: CustomeDropdown(
-                                      list: purposeList,
+                                      list: courseList,
                                       dropdownTitle: "Std.",
                                       dropdownValue: dropdownvalue1,
-                                      targetDropdownValue: "SeminarTitle",
+                                      targetDropdownValue: "CourseName",
                                     ),
                                   ),
                                   SizedBox(width: 8),
                                   // TextFormField for number input
                                   Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Container(
                                       color: Colors.white,
                                       child: TextFormField(
