@@ -8,13 +8,13 @@ class CustomeDropdown extends StatefulWidget {
   String? dropdownTitle;
   SingleSelectController? dropdownValue;
   String? targetDropdownValue;
-
+  Function(String?)? onChanged;
   CustomeDropdown(
       {required this.list,
       required this.targetDropdownValue,
       required this.dropdownValue,
       required this.dropdownTitle,
-      dynamic Function(String?)? onChanged});
+      this.onChanged});
 
   @override
   State<CustomeDropdown> createState() => _CustomeDropdownState();
@@ -26,7 +26,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
     String className = widget.targetDropdownValue.toString();
     return CustomDropdown.search(
       closedHeaderPadding:
-          EdgeInsets.symmetric(horizontal: 11.sp, vertical: 13.sp),
+      EdgeInsets.symmetric(horizontal: 11.sp, vertical: 13.sp),
       decoration: CustomDropdownDecoration(
           closedBorderRadius: BorderRadius.circular(5),
           closedBorder: Border.all(width: 1)),
@@ -36,8 +36,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
       hintText: widget.dropdownTitle,
       onChanged: (p0) {
         setState(() {
-          print(p0);
-          widget.dropdownValue!.value = p0;
+          widget.dropdownValue?.value = p0;
         });
       },
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
 import 'package:school_management_system/DB_Helper/MST_Course.dart';
+import 'package:school_management_system/DB_Helper/MST_CourseWiseStudents.dart';
 import 'package:school_management_system/DB_Helper/Purpose.dart';
 import 'package:school_management_system/DB_Helper/School.dart';
 import 'package:school_management_system/DB_Helper/Seminar.dart';
@@ -17,8 +18,11 @@ class RR_Distribution extends StatefulWidget {
 }
 
 class RowItem {
-  String? dropdownValue;
+  SingleSelectController? dropdownValue;
   TextEditingController numberController = TextEditingController();
+
+  RowItem({this.dropdownValue, TextEditingController? controller})
+      : numberController = controller ?? TextEditingController();
 }
 
 class _RR_DistributionState extends State<RR_Distribution> {
@@ -30,9 +34,10 @@ class _RR_DistributionState extends State<RR_Distribution> {
   List<dynamic> purposeList = [];
   List<dynamic> schoolList = [];
   List<dynamic> courseList = [];
+  SingleSelectController SingleDropDownValue = SingleSelectController("");
 
   // List to hold rows
-  List<RowItem> rowItems = [RowItem()];
+  List<RowItem> rowItems = [RowItem(dropdownValue: SingleSelectController(""))];
 
   // List of dropdown items
   // List<String> purposeeList = ["10th", "12th-A", "12th-B"];
@@ -169,25 +174,35 @@ class _RR_DistributionState extends State<RR_Distribution> {
                           .center, // Ensures the text is vertically centered
                     ),
                   ),
+                  ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          rowItems.add(RowItem(dropdownValue: null));
+                        });
+                      },
+                      child: Text("Add")),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: rowItems.length,
                     itemBuilder: (context, index) {
+                      print(rowItems[index].dropdownValue?.value);
                       return Padding(
                         padding: EdgeInsets.only(top: 2.0.pt),
                         child: rowItems.length > 1
                             ? SwipeActionCell(
-                                key: ObjectKey(rowItems[index]),
+                                key: ObjectKey(index),
                                 trailingActions: <SwipeAction>[
                                   SwipeAction(
-                                      performsFirstActionWithFullSwipe: true,
-                                      title: "Delete",
-                                      onTap: (CompletionHandler handler) async {
+                                    performsFirstActionWithFullSwipe: true,
+                                    title: "Delete",
+                                    onTap: (CompletionHandler handler) async {
+                                      setState(() {
                                         rowItems.removeAt(index);
-                                        setState(() {});
-                                      },
-                                      color: Colors.red),
+                                      });
+                                    },
+                                    color: Colors.red,
+                                  ),
                                 ],
                                 child: Row(
                                   children: [
@@ -197,9 +212,19 @@ class _RR_DistributionState extends State<RR_Distribution> {
                                       child: CustomeDropdown(
                                         list: courseList,
                                         dropdownTitle: "Std.",
-                                        dropdownValue: dropdownvalue1,
+                                        dropdownValue:
+                                        rowItems[index].dropdownValue,
                                         targetDropdownValue: "CourseName",
-                                      ),
+                                        onChanged: (newValue) {
+                                          print('=============$rowItems');
+                                          setState(() {
+                                            print("Before Update: ${rowItems[index].dropdownValue?.value}");
+                                            rowItems[index].dropdownValue = SingleSelectController(newValue);
+                                            print("After Update: ${rowItems[index].dropdownValue?.value}");
+
+                                          });
+                                        },
+                                      )
                                     ),
                                     SizedBox(width: 8),
                                     // TextFormField for number input
@@ -213,34 +238,27 @@ class _RR_DistributionState extends State<RR_Distribution> {
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             isDense: true,
-                                            // Makes the TextField more compact
                                             hintText: "Enter number",
                                             hintStyle: TextStyle(fontSize: 14),
-                                            // Adjusts the font size of the hint text
                                             border: OutlineInputBorder(),
                                             focusedBorder: OutlineInputBorder(),
-                                            // Defines the border when focused
                                             contentPadding:
                                                 EdgeInsets.symmetric(
                                                     vertical: 8.0,
                                                     horizontal: 8.0),
-                                            // Adjust padding to control height
-                                            alignLabelWithHint:
-                                                true, // Aligns the label with the hint text
+                                            alignLabelWithHint: true,
                                           ),
+                                          onChanged: (value) {
+                                            // Optional: Keep track of text changes
+                                            rowItems[index]
+                                                    .numberController
+                                                    .text =
+                                                value; // Sync manually if needed
+                                          },
                                         ),
                                       ),
                                     ),
                                     SizedBox(width: 8),
-                                    // + Button
-                                    IconButton(
-                                      icon: Icon(Icons.add),
-                                      onPressed: () {
-                                        setState(() {
-                                          rowItems.insert(index + 1, RowItem());
-                                        });
-                                      },
-                                    ),
                                   ],
                                 ),
                               )
@@ -249,11 +267,20 @@ class _RR_DistributionState extends State<RR_Distribution> {
                                   // Dropdown
                                   Expanded(
                                     flex: 2,
-                                    child: CustomeDropdown(
+                                    child:
+                                    CustomeDropdown(
                                       list: courseList,
                                       dropdownTitle: "Std.",
-                                      dropdownValue: dropdownvalue1,
+                                      dropdownValue: rowItems[index].dropdownValue,
                                       targetDropdownValue: "CourseName",
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          print("Before Update: ${rowItems[index].dropdownValue?.value}");
+                                          rowItems[index].dropdownValue = SingleSelectController(newValue);
+                                          print("After Update: ${rowItems[index].dropdownValue?.value}");
+
+                                        });
+                                      },
                                     ),
                                   ),
                                   SizedBox(width: 8),
@@ -268,33 +295,24 @@ class _RR_DistributionState extends State<RR_Distribution> {
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                           isDense: true,
-                                          // Makes the TextField more compact
                                           hintText: "Enter number",
                                           hintStyle: TextStyle(fontSize: 14),
-                                          // Adjusts the font size of the hint text
                                           border: OutlineInputBorder(),
                                           focusedBorder: OutlineInputBorder(),
-                                          // Defines the border when focused
                                           contentPadding: EdgeInsets.symmetric(
                                               vertical: 13.0.sp,
                                               horizontal: 13.0.sp),
-                                          // Adjust padding to control height
-                                          alignLabelWithHint:
-                                              true, // Aligns the label with the hint text
+                                          alignLabelWithHint: true,
                                         ),
+                                        onChanged: (value) {
+                                          rowItems[index]
+                                              .numberController
+                                              .text = value;
+                                        },
                                       ),
                                     ),
                                   ),
                                   SizedBox(width: 8),
-                                  // + Button
-                                  IconButton(
-                                    icon: Icon(Icons.add),
-                                    onPressed: () {
-                                      setState(() {
-                                        rowItems.insert(index + 1, RowItem());
-                                      });
-                                    },
-                                  ),
                                 ],
                               ),
                       );
@@ -304,15 +322,24 @@ class _RR_DistributionState extends State<RR_Distribution> {
                     height: 1.h,
                   ),
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         print("Value from Dropdown is ${dropdownvalue1.value}");
                         print("Value from Dropdown is ${dropdownvalue2.value}");
                         print("Value from Dropdown is ${dropdownvalue3.value}");
+                        for(int i=0;i<rowItems.length;i++){
+                          print(rowItems[i].dropdownValue?.value);
+                        }
+                        if (rowItems.length > 1) {
+                        } else {}
+                        // await MST_CourseWiseStudents().insertIntoMST_CourseWiseStudents();
                       },
                       child: Text("Save"))
                 ],
               )
-            : Center(child: CircularProgressIndicator(color: ColorTheme().PRIMARY_COLOR,)),
+            : Center(
+                child: CircularProgressIndicator(
+                color: ColorTheme().PRIMARY_COLOR,
+              )),
       ),
     );
   }
