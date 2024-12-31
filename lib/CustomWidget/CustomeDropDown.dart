@@ -8,9 +8,12 @@ class CustomeDropdown extends StatefulWidget {
   String? dropdownTitle;
   SingleSelectController? dropdownValue;
   String? targetDropdownValue;
-  Function(String?)? onChanged;
+  Function(dynamic)? onChanged;
+  String? targetID;
+
   CustomeDropdown(
       {required this.list,
+      required this.targetID,
       required this.targetDropdownValue,
       required this.dropdownValue,
       required this.dropdownTitle,
@@ -26,7 +29,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
     String className = widget.targetDropdownValue.toString();
     return CustomDropdown.search(
       closedHeaderPadding:
-      EdgeInsets.symmetric(horizontal: 11.sp, vertical: 13.sp),
+          EdgeInsets.symmetric(horizontal: 11.sp, vertical: 13.sp),
       decoration: CustomDropdownDecoration(
           closedBorderRadius: BorderRadius.circular(5),
           closedBorder: Border.all(width: 1)),
@@ -34,10 +37,17 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
           .map((e) => e[widget.targetDropdownValue.toString()])
           .toList(),
       hintText: widget.dropdownTitle,
-      onChanged: (p0) {
+      onChanged: (selectedValue) {
+        print('from custome widget $selectedValue');
         setState(() {
-          widget.dropdownValue?.value = p0;
+          widget.dropdownValue?.value = selectedValue;
         });
+        if (widget.targetID!.isNotEmpty) {
+          Map<dynamic, dynamic> tempObj = widget.list.firstWhere((element) =>
+              element[widget.targetDropdownValue] == selectedValue);
+
+          widget.onChanged?.call(tempObj[widget.targetID.toString()]);
+        }
       },
     );
   }

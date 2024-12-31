@@ -83,18 +83,18 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             CustomeDropdown(
               list: seminarList,targetDropdownValue: "SeminarTitle",
               dropdownTitle: "Topic",
-              dropdownValue: dropdownvalue1,
+              dropdownValue: dropdownvalue1, targetID: '',
             ),
             CustomeDropdown(
               list: seminarList,targetDropdownValue: "SeminarTitle",
               dropdownTitle: "Speaker1",
-              dropdownValue: dropdownvalue2,
+              dropdownValue: dropdownvalue2, targetID: '',
             ),
             CustomeDropdown(
               list: seminarList
               ,targetDropdownValue: "SeminarTitle",
               dropdownTitle: "School",
-              dropdownValue: dropdownvalue4,
+              dropdownValue: dropdownvalue4, targetID: '',
             ),
 
             SizedBox(
@@ -140,7 +140,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                                 list: seminarList,
                                 targetDropdownValue: "SeminarTitle",
                                 dropdownTitle: "Member ${index + 1}",
-                                dropdownValue: dropdownvalue5,
+                                dropdownValue: dropdownvalue5, targetID: '',
                               )),
                             ),
                             IconButton(
@@ -162,7 +162,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                               list: seminarList,
                               dropdownTitle: "Member ${index + 1}",
                               dropdownValue: dropdownvalue5,
-                              targetDropdownValue: "SeminarTitle",
+                              targetDropdownValue: "SeminarTitle", targetID: '',
                             )),
                           ),
                           IconButton(

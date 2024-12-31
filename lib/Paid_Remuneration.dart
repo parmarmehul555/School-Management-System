@@ -100,7 +100,8 @@ class _PaidRemunerationState extends State<PaidRemuneration> {
             Row(
               children: [
                 Text("Status : ",style: TextStyle(fontSize: 17.sp),),
-                Expanded(child: CustomeDropdown(dropdownValue: dropdownvalue,targetDropdownValue: "SeminarTitle",dropdownTitle: "Status",list: ["Paid","Remaining"],)),
+                Expanded(child: CustomeDropdown(dropdownValue: dropdownvalue,targetDropdownValue: "SeminarTitle",dropdownTitle: "Status",list: ["Paid","Remaining"], targetID: '',)),
+                Expanded(child: CustomeDropdown(dropdownValue: dropdownvalue,targetDropdownValue: "SeminarTitle",dropdownTitle: "Status",list: ["Paid","Remaining"], targetID: '',)),
               ],
             ),
             SizedBox(height: 1.h,),
