@@ -37,7 +37,11 @@ class _RR_DistributionState extends State<RR_Distribution> {
   List<dynamic> courseList = [];
   List<dynamic> courseDropdownList = [];
   SingleSelectController SingleDropDownValue = SingleSelectController("");
+  TextEditingController valueController = TextEditingController();
   Map<String, dynamic> collectedData = Map();
+  bool isDataInserting = false;
+
+  List<dynamic> courseWiseStudent = [];
 
   // List to hold rows
   List<RowItem> rowItems = [RowItem(dropdownValue: SingleSelectController(""))];
@@ -82,333 +86,507 @@ class _RR_DistributionState extends State<RR_Distribution> {
         padding: const EdgeInsets.all(8.0),
         child: !isLoading
             ? ListView(
-                children: [
-                  Container(
+          children: [
+            Container(
+              color: Colors.white,
+              child: TextFormField(
+                onTap: showDateDialog,
+                controller: datePickerController,
+                readOnly: true,
+                decoration: InputDecoration(
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                  alignLabelWithHint: true,
+                  prefixIcon: Icon(Icons.date_range),
+                  isDense: true,
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 0.5.h,
+            ),
+            CustomeDropdown(
+              list: purposeList,
+              dropdownTitle: "Select Purpose",
+              dropdownValue: purposeController,
+              targetDropdownValue: "PurposeTitle",
+              targetID: 'PurposeID',
+              onChanged: (purposeDetail) {
+                setState(() {
+                  collectedData["PurposeID"] = purposeDetail['PurposeID'];
+                });
+              },
+            ),
+            CustomeDropdown(
+              list: schoolList,
+              dropdownTitle: "Select School",
+              dropdownValue: schoolController,
+              targetDropdownValue: "SchoolShortName",
+              targetID: 'SchoolID',
+              onChanged: (schoolDetail) {
+                setState(() {
+                  collectedData["SchoolID"] = schoolDetail['SchoolID'];
+                });
+              },
+            ),
+            CustomeDropdown(
+              list: reasonList,
+              dropdownTitle: "Select Reason",
+              dropdownValue: reasonController,
+              targetDropdownValue: "SeminarTitle",
+              targetID: 'SeminarID',
+              onChanged: (seminarDetail) {
+                setState(() {
+                  collectedData["SeminarID"] = seminarDetail['SeminarID'];
+                });
+              },
+            ),
+            SizedBox(
+              height: 0.1.h,
+            ),
+            SizedBox(
+              height: 0.1.h,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Interested in campus visit ?",
+                  style: TextStyle(fontSize: 18.sp),
+                ),
+                Row(
+                  children: [
+                    RadioMenuButton(
+                        value: "YES",
+                        groupValue: radioButtonValue,
+                        onChanged: (value) {
+                          setState(() {
+                            radioButtonValue = value!;
+                          });
+                        },
+                        child: Text("YES")),
+                    RadioMenuButton(
+                        value: "NO",
+                        groupValue: radioButtonValue,
+                        onChanged: (value) {
+                          setState(() {
+                            radioButtonValue = value!;
+                          });
+                        },
+                        child: Text("NO")),
+                  ],
+                )
+              ],
+            ),
+            Container(
+              color: Colors.white,
+              child: TextFormField(
+                controller: totalNumberOfCopiesController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: "Enter Total Number Of Copies",
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(),
+                  hintStyle: TextStyle(
+                    fontSize: 14,
+                  ),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  alignLabelWithHint: true,
+                ),
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  // rowItems.add(RowItem(dropdownValue: null));
+                  var temp = {
+                    "CourseName": SingleDropDownValue.value,
+                    "TotalStu": valueController.text
+                  };
+                  courseWiseStudent.add(temp);
+                  print(
+                      'After Clicking Add:: $courseWiseStudent && $courseDropdownList');
+                  SingleDropDownValue.value = "";
+                  valueController.text = "";
+                });
+              },
+              child: Text("Add"),
+            ),
+            Row(
+              children: [
+                // Dropdown
+                Expanded(
+                    flex: 2,
+                    child: CustomeDropdown(
+                      list: courseList,
+                      dropdownTitle: "Std.",
+                      dropdownValue: SingleDropDownValue.value == null
+                          ? SingleSelectController("")
+                          : SingleDropDownValue,
+                      targetDropdownValue: "CourseName",
+                      onChanged: (courseDetails) {
+                        print("From dropdown $courseDetails");
+                        courseDropdownList.add(courseDetails['CourseID']);
+                      },
+                      targetID: 'CourseID',
+                    )),
+                SizedBox(width: 8),
+                // TextFormField for number input
+                Expanded(
+                  flex: 1,
+                  child: Container(
                     color: Colors.white,
                     child: TextFormField(
-                      onTap: showDateDialog,
-                      controller: datePickerController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                        alignLabelWithHint: true,
-                        prefixIcon: Icon(Icons.date_range),
-                        isDense: true,
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 0.5.h,
-                  ),
-                  CustomeDropdown(
-                    list: purposeList,
-                    dropdownTitle: "Select Purpose",
-                    dropdownValue: purposeController,
-                    targetDropdownValue: "PurposeTitle",
-                    targetID: 'PurposeID',
-                    onChanged: (PurposeID) {
-                      setState(() {
-                        collectedData["PurposeID"] = PurposeID;
-                      });
-                    },
-                  ),
-                  CustomeDropdown(
-                    list: schoolList,
-                    dropdownTitle: "Select School",
-                    dropdownValue: schoolController,
-                    targetDropdownValue: "SchoolShortName",
-                    targetID: 'SchoolID',
-                    onChanged: (SchoolID) {
-                      setState(() {
-                        collectedData["SchoolID"] = SchoolID;
-                      });
-                    },
-                  ),
-                  CustomeDropdown(
-                    list: reasonList,
-                    dropdownTitle: "Select Reason",
-                    dropdownValue: reasonController,
-                    targetDropdownValue: "SeminarTitle",
-                    targetID: 'SeminarID',
-                    onChanged: (SeminarID) {
-                      setState(() {
-                        collectedData["SeminarID"] = SeminarID;
-                      });
-                    },
-                  ),
-                  SizedBox(
-                    height: 0.1.h,
-                  ),
-                  SizedBox(
-                    height: 0.1.h,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Interested in campus visit ?",
-                        style: TextStyle(fontSize: 18.sp),
-                      ),
-                      Row(
-                        children: [
-                          RadioMenuButton(
-                              value: "YES",
-                              groupValue: radioButtonValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  radioButtonValue = value!;
-                                  collectedData["InterestInCampusVisit"] = 1;
-                                });
-                              },
-                              child: Text("YES")),
-                          RadioMenuButton(
-                              value: "NO",
-                              groupValue: radioButtonValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  radioButtonValue = value!;
-                                  collectedData["InterestInCampusVisit"] = 0;
-                                });
-                              },
-                              child: Text("NO")),
-                        ],
-                      )
-                    ],
-                  ),
-                  Container(
-                    color: Colors.white,
-                    child: TextFormField(
-                      controller: totalNumberOfCopiesController,
+                      controller:
+                      valueController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         isDense: true,
-                        hintText: "Enter total number of copies",
+                        hintText: "Enter number",
+                        hintStyle: TextStyle(fontSize: 14),
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(),
-                        hintStyle: TextStyle(
-                          fontSize: 14,
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 8.0),
                         alignLabelWithHint: true,
                       ),
-                      textAlignVertical: TextAlignVertical
-                          .center, // Ensures the text is vertically centered
+                      onChanged: (value) {},
                     ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          rowItems.add(RowItem(dropdownValue: null));
-                        });
-                      },
-                      child: Text("Add")),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: rowItems.length,
-                    itemBuilder: (context, index) {
-                      print(rowItems[index].dropdownValue?.value);
-                      return Padding(
-                        padding: EdgeInsets.only(top: 2.0.pt),
-                        child: rowItems.length > 1
-                            ? SwipeActionCell(
-                                key: ObjectKey(index),
-                                trailingActions: <SwipeAction>[
-                                  SwipeAction(
-                                    performsFirstActionWithFullSwipe: true,
-                                    title: "Delete",
-                                    onTap: (CompletionHandler handler) async {
-                                      setState(() {
-                                        courseDropdownList.removeAt(index);
-                                        print(
-                                            "Removed item from list is $courseDropdownList");
-                                        rowItems.removeAt(index);
-                                      });
-                                    },
-                                    color: Colors.red,
-                                  ),
-                                ],
-                                child: Row(
-                                  children: [
-                                    // Dropdown
-                                    Expanded(
-                                        flex: 1,
-                                        child: CustomeDropdown(
-                                          list: courseList,
-                                          dropdownTitle: "Std.",
-                                          dropdownValue:
-                                              rowItems[index].dropdownValue,
-                                          targetDropdownValue: "CourseName",
-                                          onChanged: (newValue) {
-                                            setState(() {
-                                              if (index <
-                                                  courseDropdownList.length) {
-                                                courseDropdownList[index] =
-                                                    newValue;
-                                              } else {
-                                                courseDropdownList
-                                                    .add(newValue);
-                                              }
-                                            });
-                                            print(courseDropdownList);
-                                          },
-                                          targetID: 'CourseID',
-                                        )),
-                                    SizedBox(width: 8),
-                                    // TextFormField for number input
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        color: Colors.white,
-                                        child: TextFormField(
-                                          controller:
-                                              rowItems[index].numberController,
-                                          keyboardType: TextInputType.number,
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            hintText: "Enter number",
-                                            hintStyle: TextStyle(fontSize: 14),
-                                            border: OutlineInputBorder(),
-                                            focusedBorder: OutlineInputBorder(),
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: 8.0,
-                                                    horizontal: 8.0),
-                                            alignLabelWithHint: true,
-                                          ),
-                                          onChanged: (value) {
-                                            // Optional: Keep track of text changes
-                                            rowItems[index]
-                                                .numberController
-                                                .text = value;
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                  ],
-                                ),
-                              )
-                            : Row(
-                                children: [
-                                  // Dropdown
-                                  Expanded(
-                                    flex: 2,
-                                    child: CustomeDropdown(
-                                      list: courseList,
-                                      dropdownTitle: "Std.",
-                                      dropdownValue:
-                                          rowItems[index].dropdownValue,
-                                      targetDropdownValue: "CourseName",
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          print(
-                                              'aslkdjfal;ksdjlf;jasl;djfl;jas;djlf;j;asdj;fj;alsdjlfj; $newValue');
-                                          print(
-                                              "Before Update: ${rowItems[index].dropdownValue?.value}");
-                                          rowItems[index].dropdownValue =
-                                              SingleSelectController(newValue);
-                                          print(
-                                              "After Update: ${rowItems[index].dropdownValue?.value}");
-                                          courseDropdownList[index] = newValue;
-                                          print(
-                                              'Heloo list is is sis $courseDropdownList');
-                                        });
-                                      },
-                                      targetID: '',
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  // TextFormField for number input
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      color: Colors.white,
-                                      child: TextFormField(
-                                        controller:
-                                            rowItems[index].numberController,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          isDense: true,
-                                          hintText: "Enter number",
-                                          hintStyle: TextStyle(fontSize: 14),
-                                          border: OutlineInputBorder(),
-                                          focusedBorder: OutlineInputBorder(),
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 13.0.sp,
-                                              horizontal: 13.0.sp),
-                                          alignLabelWithHint: true,
-                                        ),
-                                        onChanged: (value) {
-                                          rowItems[index]
-                                              .numberController
-                                              .text = value;
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                ],
-                              ),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: 1.h,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        String date = datePickerController.text.split(" ")[0];
-                        var dt = date.split("-");
-                        DateTime selectedDate = DateTime(int.parse(dt[0]),
-                            int.parse(dt[1]), int.parse(dt[2]));
-                        String formattedDate =
-                            "${selectedDate.day.toString().padLeft(2, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.year}";
-                        print('Splitted date $formattedDate');
-                        setState(() {
-                          collectedData["TotalNumberOfCopies"] =
-                              totalNumberOfCopiesController.text;
-                          collectedData["RRDDate"] = formattedDate;
-                        });
-                        print(collectedData);
-                        // print("Value from Dropdown is ${purposeController.value}");
-                        // print("Value from Dropdown is ${schoolController.value}");
-                        // print("Value from Dropdown is ${reasonController.value}");
-                        // var data2 = {
-                        //   "RRDDate":datePickerController.text,
-                        //   "purpose":purposeController.value,
-                        //   "school":schoolController.value,
-                        //   "reason":reasonController.value,
-                        //   "copies":totalNumberOfCopiesController.text
-                        // };
-                        print(courseDropdownList);
-                        // print("Data is $data2");
-                        for (int i = 0; i < rowItems.length; i++) {
-                          var data = {
-                            "CourseID": courseDropdownList[i],
-                            "TotalStudent": rowItems[i].numberController.text
-                          };
-                          int insertedID = await MST_CourseWiseStudents()
-                              .insertIntoMST_CourseWiseStudents(data);
-                          setState(() {
-                            collectedData['CourseWiseStudentID'] = insertedID;
-                          });
-                          print(collectedData);
-                        await MST_RR_Distribution()
-                            .insertIntoMST_RR_Distribution(collectedData);
-                        }
-                      },
-                      child: Text("Save"))
-                ],
-              )
+                ),
+                SizedBox(width: 8),
+              ],
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: courseWiseStudent.length,
+              itemBuilder: (context, index) {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Card(
+                        color: Colors.white,
+                        child: ListTile(
+                          title: Text(courseWiseStudent[index]['CourseName']),
+                          subtitle: Text(
+                              'Total Students : ${courseWiseStudent[index]['TotalStu']}'),
+                          trailing: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  courseDropdownList.removeAt(index);
+                                  courseWiseStudent.removeAt(index);
+                                  print(
+                                      "After Deletion : $courseWiseStudent && $courseDropdownList");
+                                });
+                              },
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              )),
+                          dense: true,
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              },
+            ),
+            // SwipeActionCell(
+            //   key: ObjectKey(rowItems.length),
+            //   trailingActions: <SwipeAction>[
+            //     SwipeAction(
+            //       performsFirstActionWithFullSwipe: true,
+            //       title: "Delete",
+            //       onTap: (CompletionHandler handler) async {
+            //         setState(() {
+            //           // courseDropdownList.removeAt(index);
+            //           print(
+            //               "Removed item from list is $courseDropdownList");
+            //           // rowItems.removeAt(index);
+            //         });
+            //       },
+            //       color: Colors.red,
+            //     ),
+            //   ],
+            //   child: Row(
+            //     children: [
+            //       // Dropdown
+            //       Expanded(
+            //           flex: 2,
+            //           child: CustomeDropdown(
+            //             list: courseList,
+            //             dropdownTitle: "Std.",
+            //             dropdownValue:
+            //             rowItems[index].dropdownValue,
+            //             targetDropdownValue: "CourseName",
+            //             onChanged: (newValue) {
+            //               setState(() {
+            //                 if (index <
+            //                     courseDropdownList.length) {
+            //                   courseDropdownList[index] =
+            //                       newValue;
+            //                 } else {
+            //                   courseDropdownList
+            //                       .add(newValue);
+            //                 }
+            //               });
+            //               print(courseDropdownList);
+            //             },
+            //             targetID: 'CourseID',
+            //           )),
+            //       SizedBox(width: 8),
+            //       // TextFormField for number input
+            //       Expanded(
+            //         flex: 1,
+            //         child: Container(
+            //           color: Colors.white,
+            //           child: TextFormField(
+            //             controller:
+            //             rowItems[index].numberController,
+            //             keyboardType: TextInputType.number,
+            //             decoration: InputDecoration(
+            //               isDense: true,
+            //               hintText: "Enter number",
+            //               hintStyle: TextStyle(fontSize: 14),
+            //               border: OutlineInputBorder(),
+            //               focusedBorder: OutlineInputBorder(),
+            //               contentPadding:
+            //               EdgeInsets.symmetric(
+            //                   vertical: 8.0,
+            //                   horizontal: 8.0),
+            //               alignLabelWithHint: true,
+            //             ),
+            //             onChanged: (value) {
+            //               // Optional: Keep track of text changes
+            //               rowItems[index]
+            //                   .numberController
+            //                   .text = value;
+            //             },
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(width: 8),
+            //     ],
+            //   ),
+            // ),
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   physics: NeverScrollableScrollPhysics(),
+            //   itemCount: rowItems.length,
+            //   itemBuilder: (context, index) {
+            //     print(rowItems[index].dropdownValue?.value);
+            //     return Padding(
+            //       padding: EdgeInsets.only(top: 2.0.pt),
+            //       child: rowItems.length > 1
+            //           ? SwipeActionCell(
+            //               key: ObjectKey(index),
+            //               trailingActions: <SwipeAction>[
+            //                 SwipeAction(
+            //                   performsFirstActionWithFullSwipe: true,
+            //                   title: "Delete",
+            //                   onTap: (CompletionHandler handler) async {
+            //                     setState(() {
+            //                       courseDropdownList.removeAt(index);
+            //                       print(
+            //                           "Removed item from list is $courseDropdownList");
+            //                       rowItems.removeAt(index);
+            //                     });
+            //                   },
+            //                   color: Colors.red,
+            //                 ),
+            //               ],
+            //               child: Row(
+            //                 children: [
+            //                   // Dropdown
+            //                   Expanded(
+            //                       flex: 2,
+            //                       child: CustomeDropdown(
+            //                         list: courseList,
+            //                         dropdownTitle: "Std.",
+            //                         dropdownValue:
+            //                             rowItems[index].dropdownValue,
+            //                         targetDropdownValue: "CourseName",
+            //                         onChanged: (newValue) {
+            //                           setState(() {
+            //                             if (index <
+            //                                 courseDropdownList.length) {
+            //                               courseDropdownList[index] =
+            //                                   newValue;
+            //                             } else {
+            //                               courseDropdownList
+            //                                   .add(newValue);
+            //                             }
+            //                           });
+            //                           print(courseDropdownList);
+            //                         },
+            //                         targetID: 'CourseID',
+            //                       )),
+            //                   SizedBox(width: 8),
+            //                   // TextFormField for number input
+            //                   Expanded(
+            //                     flex: 1,
+            //                     child: Container(
+            //                       color: Colors.white,
+            //                       child: TextFormField(
+            //                         controller:
+            //                             rowItems[index].numberController,
+            //                         keyboardType: TextInputType.number,
+            //                         decoration: InputDecoration(
+            //                           isDense: true,
+            //                           hintText: "Enter number",
+            //                           hintStyle: TextStyle(fontSize: 14),
+            //                           border: OutlineInputBorder(),
+            //                           focusedBorder: OutlineInputBorder(),
+            //                           contentPadding:
+            //                               EdgeInsets.symmetric(
+            //                                   vertical: 8.0,
+            //                                   horizontal: 8.0),
+            //                           alignLabelWithHint: true,
+            //                         ),
+            //                         onChanged: (value) {
+            //                           // Optional: Keep track of text changes
+            //                           rowItems[index]
+            //                               .numberController
+            //                               .text = value;
+            //                         },
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   SizedBox(width: 8),
+            //                 ],
+            //               ),
+            //             )
+            //           : Row(
+            //               children: [
+            //                 // Dropdown
+            //                 Expanded(
+            //                     flex: 2,
+            //                     child: CustomeDropdown(
+            //                       list: courseList,
+            //                       dropdownTitle: "Std.",
+            //                       dropdownValue:
+            //                           rowItems[0].dropdownValue,
+            //                       targetDropdownValue: "CourseName",
+            //                       onChanged: (newValue) {
+            //                         setState(() {
+            //                           if (index <
+            //                               courseDropdownList.length) {
+            //                             courseDropdownList[0] =
+            //                                 newValue;
+            //                           } else {
+            //                             courseDropdownList.add(newValue);
+            //                           }
+            //                         });
+            //                         print(courseDropdownList);
+            //                       },
+            //                       targetID: 'CourseID',
+            //                     )),
+            //                 SizedBox(width: 8),
+            //                 // TextFormField for number input
+            //                 Expanded(
+            //                   flex: 1,
+            //                   child: Container(
+            //                     color: Colors.white,
+            //                     child: TextFormField(
+            //                       controller:
+            //                           rowItems[0].numberController,
+            //                       keyboardType: TextInputType.number,
+            //                       decoration: InputDecoration(
+            //                         isDense: true,
+            //                         hintText: "Enter number",
+            //                         hintStyle: TextStyle(fontSize: 14),
+            //                         border: OutlineInputBorder(),
+            //                         focusedBorder: OutlineInputBorder(),
+            //                         contentPadding: EdgeInsets.symmetric(
+            //                             vertical: 8.0, horizontal: 8.0),
+            //                         alignLabelWithHint: true,
+            //                       ),
+            //                       onChanged: (value) {
+            //                         // Optional: Keep track of text changes
+            //                         rowItems[0]
+            //                             .numberController
+            //                             .text = value;
+            //                       },
+            //                     ),
+            //                   ),
+            //                 ),
+            //                 SizedBox(width: 8),
+            //               ],
+            //             ),
+            //     );
+            //   },
+            // ),
+            SizedBox(
+              height: 1.h,
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  setState(() {
+                    isDataInserting = true;
+                  });
+                  if (radioButtonValue == "NO") {
+                    collectedData["InterestInCampusVisit"] = 0;
+                  } else {
+                    collectedData["InterestInCampusVisit"] = 1;
+                  }
+                  String date = datePickerController.text.split(" ")[0];
+                  var dt = date.split("-");
+                  DateTime selectedDate = DateTime(int.parse(dt[0]),
+                      int.parse(dt[1]), int.parse(dt[2]));
+                  String formattedDate =
+                      "${selectedDate.day.toString().padLeft(
+                      2, '0')}-${selectedDate.month.toString().padLeft(
+                      2, '0')}-${selectedDate.year}";
+                  setState(() {
+                    collectedData["TotalNumberOfCopies"] =
+                        totalNumberOfCopiesController.text;
+                    collectedData["RRDDate"] = formattedDate;
+                  });
+
+                  int RRDID = await MST_RR_Distribution()
+                          .insertIntoMST_RR_Distribution(collectedData);
+                  var snackBar;
+                  for (int i = 0; i < courseDropdownList.length; i++) {
+                    try {
+                      var data = {
+                        "CourseID": courseDropdownList[i],
+                        "TotalStudent": courseWiseStudent[i]['TotalStu'],
+                        "RRDID":RRDID
+                      };
+                      await MST_CourseWiseStudents()
+                          .insertIntoMST_CourseWiseStudents(data);
+                      snackBar = SnackBar(
+                        content: Text("Record Saved Successfully..!"),);
+                    } catch (e) {
+                      snackBar =
+                          SnackBar(content: Text("Something Went Worng..!"),);
+                      setState(() {
+                        isDataInserting = false;
+                      });
+                    }
+                  }
+                  setState(() {
+                    isDataInserting = false;
+                  });
+                  if (!isDataInserting) {
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }
+                },
+                child: isDataInserting ? CircularProgressIndicator(
+                  color: ColorTheme().PRIMARY_COLOR,) : Text("Save"))
+          ],
+        )
             : Center(
-                child: CircularProgressIndicator(
-                color: ColorTheme().PRIMARY_COLOR,
-              )),
+            child: CircularProgressIndicator(
+              color: ColorTheme().PRIMARY_COLOR,
+            )),
       ),
     );
   }

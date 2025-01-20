@@ -45,8 +45,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
         if (widget.targetID!.isNotEmpty) {
           Map<dynamic, dynamic> tempObj = widget.list.firstWhere((element) =>
               element[widget.targetDropdownValue] == selectedValue);
-
-          widget.onChanged?.call(tempObj[widget.targetID.toString()]);
+          widget.onChanged?.call(tempObj);
         }
       },
     );
