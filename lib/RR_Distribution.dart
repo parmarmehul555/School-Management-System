@@ -545,8 +545,7 @@ class _RR_DistributionState extends State<RR_Distribution> {
                       2, '0')}-${selectedDate.month.toString().padLeft(
                       2, '0')}-${selectedDate.year}";
                   setState(() {
-                    collectedData["TotalNumberOfCopies"] =
-                        totalNumberOfCopiesController.text;
+                    collectedData["TotalNumberOfCopies"] = totalNumberOfCopiesController.text;
                     collectedData["RRDDate"] = formattedDate;
                   });
 

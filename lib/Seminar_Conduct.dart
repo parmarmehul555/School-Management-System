@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
+import 'package:school_management_system/DB_Helper/Member.dart';
+import 'package:school_management_system/DB_Helper/School.dart';
 import 'package:school_management_system/DB_Helper/Seminar.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
+
+import 'DB_Helper/SeminarWiseMember.dart';
+import 'DB_Helper/Seminar_Conduct.dart';
 
 class Seminar_Conduct extends StatefulWidget {
   @override
@@ -12,20 +16,36 @@ class Seminar_Conduct extends StatefulWidget {
 }
 
 class RowItem {
-  String? dropdownValue;
+  SingleSelectController? dropdownValue;
+  TextEditingController numberController = TextEditingController();
+
+  RowItem({this.dropdownValue, TextEditingController? controller})
+      : numberController = controller ?? TextEditingController();
 }
 
 class _Seminar_ConductState extends State<Seminar_Conduct> {
   bool isLoading = true;
   TextEditingController datePickerController = TextEditingController();
-  String radioButtonValue = "YES";
   String dropdownValue = "";
   List<dynamic> seminarList = [];
+  List<dynamic> memberList = [];
+  List<dynamic> schoolList = [];
+  List<dynamic> memberDropdownLIst = [];
+  List<dynamic> seminarWiseMember = [];
+  bool isDataInserting = false;
+  Map<String, dynamic> collectedData = Map();
+
+  TextEditingController otherMemberController = TextEditingController();
+  TextEditingController totalTeacherController = TextEditingController();
+  TextEditingController totalStudentController = TextEditingController();
+  TextEditingController totalExpenceController = TextEditingController();
+
+
+
+  TextEditingController valueController = TextEditingController();
+  SingleSelectController SingleDropDownValue = SingleSelectController("");
 
   List<RowItem> rowItems = [RowItem()];
-
-  // List of dropdown items
-  List<String> purposeeList = ["10th", "12th-A", "12th-B"];
 
   @override
   void initState() {
@@ -35,17 +55,20 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
 
   Future<void> _loadData() async {
     var tempPurposeList = await Seminar().seminarSelectForDDL()!;
+    var tempMemberList = await Member().selectMemberDDL()!;
+    var tempSchoolList = await School().selectSchoolDDL()!;
     setState(() {
       seminarList = tempPurposeList;
+      memberList=tempMemberList;
+      schoolList=tempSchoolList;
     });
     isLoading = false;
   }
 
-  // List<String> seminarList = ["First", "Second", "Third", "Forth"];
-  SingleSelectController dropdownvalue1 = SingleSelectController("First");
-  SingleSelectController dropdownvalue2 = SingleSelectController("First");
-  SingleSelectController dropdownvalue3 = SingleSelectController("First");
-  SingleSelectController dropdownvalue4 = SingleSelectController("First");
+  SingleSelectController topicController = SingleSelectController("First");
+  SingleSelectController memberController = SingleSelectController("First");
+  SingleSelectController schoolController = SingleSelectController("First");
+  SingleSelectController carOwnerController = SingleSelectController("First");
   SingleSelectController dropdownvalue5 = SingleSelectController("First");
   SingleSelectController dropdownvalue6 = SingleSelectController("First");
   SingleSelectController dropdownvalue7 = SingleSelectController("First");
@@ -81,20 +104,40 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
               height: 0.5.h,
             ),
             CustomeDropdown(
-              list: seminarList,targetDropdownValue: "SeminarTitle",
+              list: seminarList,
+              dropdownValue: topicController,
+              targetDropdownValue: "SeminarTitle",
               dropdownTitle: "Topic",
-              dropdownValue: dropdownvalue1, targetID: '',
+              targetID: 'SeminarID',
+              onChanged: (topicDetail) {
+                setState(() {
+                  collectedData["SeminarID"] = topicDetail['SeminarID'];
+                });
+              },
             ),
             CustomeDropdown(
-              list: seminarList,targetDropdownValue: "SeminarTitle",
-              dropdownTitle: "Speaker1",
-              dropdownValue: dropdownvalue2, targetID: '',
+              list: memberList,
+              dropdownValue: memberController,
+              targetDropdownValue: "MemberName",
+              dropdownTitle: "Speaker",
+              targetID: 'MemberID',
+              onChanged: (speakerDetail) {
+                setState(() {
+                  collectedData["MemberID"] = speakerDetail['MemberID'];
+                });
+              },
             ),
             CustomeDropdown(
-              list: seminarList
-              ,targetDropdownValue: "SeminarTitle",
+              list: schoolList,
+              dropdownValue: schoolController,
+              targetDropdownValue: "SchoolShortName",
               dropdownTitle: "School",
-              dropdownValue: dropdownvalue4, targetID: '',
+              targetID: 'SchoolID',
+              onChanged: (schoolDetail) {
+                setState(() {
+                  collectedData["SchoolID"] = schoolDetail['SchoolID'];
+                });
+              },
             ),
 
             SizedBox(
@@ -113,76 +156,78 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                 ),
               ],
             ),
+            Row(
+              children: [
+                // Dropdown
+                Expanded(
+                    flex: 2,
+                    child: CustomeDropdown(
+                      list: memberList,
+                      dropdownTitle: "Member",
+                      dropdownValue: SingleDropDownValue.value == null
+                          ? SingleSelectController("")
+                          : SingleDropDownValue,
+                      targetDropdownValue: "MemberName",
+                      onChanged: (memberDetail) {
+                        print("From dropdown $memberDetail");
+                        memberDropdownLIst.add(memberDetail['MemberID']);
+                      },
+                      targetID: 'MemberID',
+                    )),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      var temp = {
+                        "MemberName": SingleDropDownValue.value,
+                      };
+                      seminarWiseMember.add(temp);
+                      print('After Clicking Add:: $seminarWiseMember && $memberDropdownLIst');
+                      SingleDropDownValue.value = "";
+                      valueController.text = "";
+                    });
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ],
+            ),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: rowItems.length,
+              itemCount: seminarWiseMember.length,
               itemBuilder: (context, index) {
-                return rowItems.length > 1
-                    ? SwipeActionCell(
-                        key: ObjectKey(rowItems[index]),
-                        trailingActions: <SwipeAction>[
-                          SwipeAction(
-                              performsFirstActionWithFullSwipe: true,
-                              title: "Delete",
-                              onTap: (CompletionHandler handler) async {
-                                rowItems.removeAt(index);
-                                setState(() {});
-                              },
-                              color: Colors.red),
-                        ],
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                  child: CustomeDropdown(
-                                list: seminarList,
-                                targetDropdownValue: "SeminarTitle",
-                                dropdownTitle: "Member ${index + 1}",
-                                dropdownValue: dropdownvalue5, targetID: '',
-                              )),
-                            ),
-                            IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    rowItems.insert(index + 1, RowItem());
-                                  });
-                                },
-                                icon: Icon(Icons.add))
-                          ],
-                        ),
-                      )
-                    : Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                                child: CustomeDropdown(
-                              list: seminarList,
-                              dropdownTitle: "Member ${index + 1}",
-                              dropdownValue: dropdownvalue5,
-                              targetDropdownValue: "SeminarTitle", targetID: '',
-                            )),
-                          ),
-                          IconButton(
-                              onPressed: () {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Card(
+                        color: Colors.white,
+                        child: ListTile(
+                          title: Text(seminarWiseMember[index]['MemberName']),
+                          trailing: GestureDetector(
+                              onTap: () {
                                 setState(() {
-                                  rowItems.insert(index + 1, RowItem());
+                                  memberDropdownLIst.removeAt(index);
+                                  seminarWiseMember.removeAt(index);
+                                  print(
+                                      "After Deletion : $seminarWiseMember && $memberDropdownLIst");
                                 });
                               },
-                              icon: Icon(Icons.add))
-                        ],
-                      );
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              )),
+                          dense: true,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
               },
             ),
-            // CustomeDropdown(list: seminarList,dropdownTitle:"member1",dropdownValue: dropdownvalue5,),
-            // CustomeDropdown(list: seminarList,dropdownTitle:"member2",dropdownValue: dropdownvalue6,),
-            // CustomeDropdown(list: seminarList,dropdownTitle:"member3",dropdownValue: dropdownvalue7,),
+
             Container(
               color: Colors.white,
               child: TextFormField(
-                keyboardType: TextInputType.number,
+                controller: otherMemberController,
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: "Other Members",
@@ -205,6 +250,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             Container(
               color: Colors.white,
               child: TextFormField(
+                controller: totalTeacherController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   isDense: true,
@@ -228,6 +274,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             Container(
               color: Colors.white,
               child: TextFormField(
+                controller: totalStudentController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   isDense: true,
@@ -248,25 +295,37 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             SizedBox(
               height: 0.3.h,
             ),
-            Container(
-              color: Colors.white,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: "Car Owners",
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(),
-                  hintStyle: TextStyle(
-                    fontSize: 14,
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  alignLabelWithHint: true,
-                ),
-                textAlignVertical: TextAlignVertical
-                    .center, // Ensures the text is vertically centered
-              ),
+            // Container(
+            //   color: Colors.white,
+            //   child: TextFormField(
+            //     keyboardType: TextInputType.number,
+            //     decoration: InputDecoration(
+            //       isDense: true,
+            //       hintText: "Car Owners",
+            //       border: OutlineInputBorder(),
+            //       focusedBorder: OutlineInputBorder(),
+            //       hintStyle: TextStyle(
+            //         fontSize: 14,
+            //       ),
+            //       contentPadding:
+            //           EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            //       alignLabelWithHint: true,
+            //     ),
+            //     textAlignVertical: TextAlignVertical
+            //         .center, // Ensures the text is vertically centered
+            //   ),
+            // ),
+            CustomeDropdown(
+              list: memberList,
+              dropdownValue: carOwnerController,
+              targetDropdownValue: "MemberName",
+              dropdownTitle: "Car Owner",
+              targetID: 'MemberID',
+              onChanged: (speakerDetail) {
+                setState(() {
+                  collectedData["CarOwner"] = speakerDetail['MemberID'];
+                });
+              },
             ),
             SizedBox(
               height: 0.3.h,
@@ -274,6 +333,7 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
             Container(
               color: Colors.white,
               child: TextFormField(
+                controller: totalExpenceController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   isDense: true,
@@ -295,12 +355,56 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
               height: 0.3.h,
             ),
             ElevatedButton(
-                onPressed: () {
-                  print("Value from Dropdown is ${dropdownvalue1.value}");
-                  print("Value from Dropdown is ${dropdownvalue2.value}");
-                  print("Value from Dropdown is ${dropdownvalue3.value}");
+                onPressed: () async {
+                  setState(() {
+                    isDataInserting = true;
+                  });
+                  String date = datePickerController.text.split(" ")[0];
+                  var dt = date.split("-");
+                  DateTime selectedDate = DateTime(int.parse(dt[0]),
+                      int.parse(dt[1]), int.parse(dt[2]));
+                  String formattedDate =
+                      "${selectedDate.day.toString().padLeft(
+                      2, '0')}-${selectedDate.month.toString().padLeft(
+                      2, '0')}-${selectedDate.year}";
+                  setState(() {
+                    collectedData["SeminarDate"] = formattedDate;
+                    collectedData["OtherMember"] = otherMemberController.text;
+                    collectedData["TotalTeacher"] = totalTeacherController.text;
+                    collectedData["TotalStudent"] = totalStudentController.text;
+                    collectedData["TotalExpence"] = totalExpenceController.text;
+                  });
+
+                  print("+++++++++++++${collectedData}");
+
+
+                  int seminarID = await SeminarConduct().insertSeminarConduct(collectedData);
+                  var snackBar;
+                  for (int i = 0; i < memberDropdownLIst.length; i++) {
+                    try {
+                      var data = {
+                        "SeminarConduct": seminarID,
+                        "MemberID":memberDropdownLIst[i]
+                      };
+                      await SeminarWiseMemberDB().insertSeminarWiseMember(data);
+                      snackBar = SnackBar(
+                        content: Text("Record Saved Successfully..!"),);
+                    } catch (e) {
+                      snackBar = SnackBar(content: Text("Something Went Worng..!"),);
+                      setState(() {
+                        isDataInserting = false;
+                      });
+                    }
+                  }
+                  setState(() {
+                    isDataInserting = false;
+                  });
+                  if (!isDataInserting) {
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  }
                 },
-                child: Text("Save"))
+                child: isDataInserting ? CircularProgressIndicator(
+                  color: ColorTheme().PRIMARY_COLOR,) : Text("Save"))
           ],
         ) : Center(child: CircularProgressIndicator(color: ColorTheme().PRIMARY_COLOR,)),
       ),
