@@ -383,9 +383,12 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                   for (int i = 0; i < memberDropdownLIst.length; i++) {
                     try {
                       var data = {
-                        "SeminarConduct": seminarID,
+                        "SeminarConductID": seminarID,
                         "MemberID":memberDropdownLIst[i]
                       };
+
+                      print("----------${data}");
+
                       await SeminarWiseMemberDB().insertSeminarWiseMember(data);
                       snackBar = SnackBar(
                         content: Text("Record Saved Successfully..!"),);
