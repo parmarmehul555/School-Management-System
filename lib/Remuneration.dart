@@ -3,7 +3,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
 import 'package:sizer/sizer.dart';
 
-class Remuneration extends StatefulWidget{
+class Remuneration extends StatefulWidget {
   @override
   State<Remuneration> createState() => _RemunerationState();
 }
@@ -14,7 +14,6 @@ class RowItem {
 }
 
 class _RemunerationState extends State<Remuneration> {
-
   TextEditingController datePickerController = TextEditingController();
   String dropdownValue = "";
 
@@ -24,7 +23,7 @@ class _RemunerationState extends State<Remuneration> {
   }
 
   List<String> eventList = ["First", "Second", "Third", "Forth"];
-  SingleSelectController dropdownvalue1 = SingleSelectController("First");
+  SingleSelectController dropdownvalue1 = SingleSelectController("");
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,8 @@ class _RemunerationState extends State<Remuneration> {
                 controller: datePickerController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                   alignLabelWithHint: true,
                   prefixIcon: Icon(Icons.date_range),
                   isDense: true,
@@ -55,12 +55,16 @@ class _RemunerationState extends State<Remuneration> {
             SizedBox(
               height: 0.5.h,
             ),
-            CustomeDropdown(list: eventList,targetDropdownValue: "SeminarTitle",dropdownTitle:"Event",dropdownValue: dropdownvalue1, targetID: '',),
-
+            CustomeDropdown(
+              list: eventList,
+              targetDropdownValue: "SeminarTitle",
+              dropdownTitle: "Event",
+              dropdownValue: dropdownvalue1,
+              targetID: '',
+            ),
             SizedBox(
               height: 0.1.h,
             ),
-
             SizedBox(
               height: 0.1.h,
             ),
@@ -76,16 +80,22 @@ class _RemunerationState extends State<Remuneration> {
                   hintStyle: TextStyle(
                     fontSize: 14,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   alignLabelWithHint: true,
                 ),
-                textAlignVertical: TextAlignVertical.center, // Ensures the text is vertically centered
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
               ),
             ),
-            SizedBox(height: 1.h,),
-            ElevatedButton(onPressed: () {
-              print("Value from Dropdown is ${dropdownvalue1.value}");
-            }, child: Text("Save"))
+            SizedBox(
+              height: 1.h,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  print("Value from Dropdown is ${dropdownvalue1.value}");
+                },
+                child: Text("Save"))
           ],
         ),
       ),
@@ -107,16 +117,6 @@ class _RemunerationState extends State<Remuneration> {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 //
 // import 'package:flutter/material.dart';
