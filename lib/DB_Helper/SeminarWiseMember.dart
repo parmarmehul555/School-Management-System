@@ -5,7 +5,7 @@ class SeminarWiseMemberDB {
   Future<void> insertSeminarWiseMember(Map<String, dynamic> data) async {
     Database db = await SchoolVisitDB().initDatabase();
     String query = '''
-      INSERT INTO SeminarWiseMember
+      INSERT INTO MST_SeminarWiseMembers
           (SeminarConductID, MemberID)
       VALUES (?, ?)
     ''';
