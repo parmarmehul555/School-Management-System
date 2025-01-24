@@ -12,6 +12,7 @@ import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
 import 'DB_Helper/Member.dart';
+import 'DB_Helper/Remuneration.dart';
 
 class RR_Distribution extends StatefulWidget {
   const RR_Distribution({super.key});
@@ -596,8 +597,16 @@ class _RR_DistributionState extends State<RR_Distribution> {
                     collectedData["TotalExpence"] = totalExpenceController.text;
                   });
 
-                  int RRDID = await MST_RR_Distribution()
-                          .insertIntoMST_RR_Distribution(collectedData);
+                  int RRDID = await MST_RR_Distribution().insertIntoMST_RR_Distribution(collectedData);
+
+                  Map<String,dynamic> remunerationData = {
+                    "TotalAmount":collectedData["TotalExpence"],
+                    "RemainingAmount":collectedData["TotalExpence"],
+                    "RRDID":RRDID,
+                  };
+
+                  await Remunerationn().insertIntoRemunerationFromRRD(remunerationData);
+
                   var snackBar;
                   for (int i = 0; i < courseDropdownList.length; i++) {
                     try {
