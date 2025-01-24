@@ -1,6 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:school_management_system/Models/SeminarDDL.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomeDropdown extends StatefulWidget {
@@ -8,6 +7,7 @@ class CustomeDropdown extends StatefulWidget {
   String? dropdownTitle;
   SingleSelectController? dropdownValue;
   String? targetDropdownValue;
+  String? idxToDisplay;
   Function(dynamic)? onChanged;
   String? targetID;
 
@@ -17,7 +17,8 @@ class CustomeDropdown extends StatefulWidget {
       required this.targetDropdownValue,
       required this.dropdownValue,
       required this.dropdownTitle,
-      this.onChanged});
+      this.onChanged,
+      this.idxToDisplay});
 
   @override
   State<CustomeDropdown> createState() => _CustomeDropdownState();
@@ -26,7 +27,6 @@ class CustomeDropdown extends StatefulWidget {
 class _CustomeDropdownState extends State<CustomeDropdown> {
   @override
   Widget build(BuildContext context) {
-    String className = widget.targetDropdownValue.toString();
     return CustomDropdown.search(
       closedHeaderPadding:
           EdgeInsets.symmetric(horizontal: 11.sp, vertical: 13.sp),
@@ -34,13 +34,18 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
           closedBorderRadius: BorderRadius.circular(5),
           closedBorder: Border.all(width: 1)),
       items: widget.list
-          .map((e) => e[widget.targetDropdownValue.toString()])
+          .map((e) => widget.idxToDisplay != null
+              ? "${e[widget.idxToDisplay]} | ${e[widget.targetDropdownValue]}"
+              : e[widget.targetDropdownValue.toString()])
           .toList(),
       hintText: widget.dropdownTitle,
       onChanged: (selectedValue) {
         print('from custome widget $selectedValue');
         setState(() {
           widget.dropdownValue?.value = selectedValue;
+          if(selectedValue.toString().contains(' | ')){
+            selectedValue = selectedValue.toString().split(' | ')[1];
+          }
         });
         if (widget.targetID!.isNotEmpty) {
           Map<dynamic, dynamic> tempObj = widget.list.firstWhere((element) =>

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
 import 'package:school_management_system/DB_Helper/Member.dart';
+import 'package:school_management_system/DB_Helper/Remuneration.dart';
 import 'package:school_management_system/DB_Helper/School.dart';
 import 'package:school_management_system/DB_Helper/Seminar.dart';
 import 'package:school_management_system/utils/theme.dart';
@@ -373,12 +374,17 @@ class _Seminar_ConductState extends State<Seminar_Conduct> {
                     collectedData["TotalTeacher"] = totalTeacherController.text;
                     collectedData["TotalStudent"] = totalStudentController.text;
                     collectedData["TotalExpence"] = totalExpenceController.text;
+                    collectedData["RemainingAmount"] = totalExpenceController.text;
                   });
 
                   print("+++++++++++++${collectedData}");
-
-
                   int seminarID = await SeminarConduct().insertSeminarConduct(collectedData);
+                  Map<String,dynamic> remunerationData = {
+                    "TotalAmount":collectedData["TotalExpence"],
+                    "RemainingAmount":collectedData["TotalExpence"],
+                    "SeminarConductID":seminarID,
+                  };
+                  await Remunerationn().insertIntoRemuneration(remunerationData);
                   var snackBar;
                   for (int i = 0; i < memberDropdownLIst.length; i++) {
                     try {

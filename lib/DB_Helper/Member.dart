@@ -12,4 +12,22 @@ class Member{
     }
     return [];
   }
+
+  Future<List<dynamic>> selectMemberBySeminarConductID(int seminarConductID) async {
+    List<dynamic> memberList = [];
+    Database db = await SchoolVisitDB().initDatabase();
+    String query = '''SELECT 
+                        MST_Member.MemberID,
+                        MST_Member.MemberName,
+                        MST_SeminarWiseMembers.SeminarConductID
+                      FROM MST_SeminarWiseMembers
+                      INNER JOIN MST_Member
+                      ON MST_SeminarWiseMembers.MemberID = MST_Member.MemberID
+                      WHERE MST_SeminarWiseMembers.SeminarConductID = ?''';
+    memberList = await db.rawQuery(query,[seminarConductID]);
+    if(memberList.isNotEmpty){
+      return memberList;
+    }
+    return memberList;
+  }
 }
