@@ -11,6 +11,8 @@ import 'package:school_management_system/DB_Helper/Seminar.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
+import 'DB_Helper/Member.dart';
+
 class RR_Distribution extends StatefulWidget {
   const RR_Distribution({super.key});
 
@@ -35,9 +37,12 @@ class _RR_DistributionState extends State<RR_Distribution> {
   List<dynamic> purposeList = [];
   List<dynamic> schoolList = [];
   List<dynamic> courseList = [];
+  List<dynamic> memberList = [];
   List<dynamic> courseDropdownList = [];
+  SingleSelectController memberController = SingleSelectController("First");
   SingleSelectController SingleDropDownValue = SingleSelectController("");
   TextEditingController valueController = TextEditingController();
+  TextEditingController totalExpenceController = TextEditingController();
   Map<String, dynamic> collectedData = Map();
   bool isDataInserting = false;
 
@@ -58,6 +63,7 @@ class _RR_DistributionState extends State<RR_Distribution> {
   }
 
   Future<void> _loadData() async {
+    var tempMemberList = await Member().selectMemberDDL()!;
     var tempReasonList = await Seminar().seminarSelectForDDL()!;
     var tempPurposeList = await Purpose().selectPurposeDDL();
     var tempSchoolList = await School().selectSchoolDDL();
@@ -67,6 +73,7 @@ class _RR_DistributionState extends State<RR_Distribution> {
       purposeList = tempPurposeList;
       schoolList = tempSchoolList;
       courseList = tempCourseList;
+      memberList=tempMemberList;
     });
     isLoading = false;
   }
@@ -179,6 +186,45 @@ class _RR_DistributionState extends State<RR_Distribution> {
                   ],
                 )
               ],
+            ),
+            SizedBox(
+              height: 0.1.h,
+            ),
+            CustomeDropdown(
+              list: memberList,
+              dropdownValue: memberController,
+              targetDropdownValue: "MemberName",
+              dropdownTitle: "Car Owner",
+              targetID: 'MemberID',
+              onChanged: (ownerDetail) {
+                setState(() {
+                  collectedData["CarOwner"] = ownerDetail['MemberID'];
+                });
+              },
+            ),
+            SizedBox(
+              height: 0.1.h,
+            ),
+            Container(
+              color: Colors.white,
+              child: TextFormField(
+                controller: totalExpenceController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: "total expense",
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(),
+                  hintStyle: TextStyle(
+                    fontSize: 14,
+                  ),
+                  contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  alignLabelWithHint: true,
+                ),
+                textAlignVertical: TextAlignVertical
+                    .center, // Ensures the text is vertically centered
+              ),
             ),
             Container(
               color: Colors.white,
@@ -547,6 +593,7 @@ class _RR_DistributionState extends State<RR_Distribution> {
                   setState(() {
                     collectedData["TotalNumberOfCopies"] = totalNumberOfCopiesController.text;
                     collectedData["RRDDate"] = formattedDate;
+                    collectedData["TotalExpence"] = totalExpenceController.text;
                   });
 
                   int RRDID = await MST_RR_Distribution()

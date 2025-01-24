@@ -10,6 +10,7 @@ class CustomeDropdown extends StatefulWidget {
   String? idxToDisplay;
   Function(dynamic)? onChanged;
   String? targetID;
+  bool? enable;
 
   CustomeDropdown(
       {required this.list,
@@ -18,7 +19,7 @@ class CustomeDropdown extends StatefulWidget {
       required this.dropdownValue,
       required this.dropdownTitle,
       this.onChanged,
-      this.idxToDisplay});
+      this.idxToDisplay,this.enable});
 
   @override
   State<CustomeDropdown> createState() => _CustomeDropdownState();
@@ -28,6 +29,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown.search(
+      enabled: widget.enable ?? true,
       closedHeaderPadding:
           EdgeInsets.symmetric(horizontal: 11.sp, vertical: 13.sp),
       decoration: CustomDropdownDecoration(

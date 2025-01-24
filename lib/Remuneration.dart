@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:flutter/rendering.dart';
 import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
 import 'package:school_management_system/DB_Helper/MST_Remuneration.dart';
 import 'package:school_management_system/DB_Helper/Member.dart';
@@ -9,6 +10,8 @@ import 'package:school_management_system/utils/funtions.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 import 'package:school_management_system/Remuneration.dart' as rmu;
+
+import 'DB_Helper/MST_RR_Distribution.dart';
 
 class Remuneration extends StatefulWidget {
   @override
@@ -28,11 +31,13 @@ class _RemunerationState extends State<Remuneration> {
   bool showDetails = false;
   List<dynamic> seminarConductList = [];
   List<dynamic> seminarWiseMembers = [];
+  List<dynamic> RRList = [];
   Map<String, dynamic> seminarDetails = Map();
   int seminarConductID = -1;
   int memberID = -1;
   int remainingAmount = 0;
   List<dynamic> filteredSeminarConductList = [];
+  Map<String,dynamic> distributionDetail=Map();
 
   @override
   void initState() {
@@ -45,13 +50,19 @@ class _RemunerationState extends State<Remuneration> {
   Future<void> _fetchData() async {
     datePickerController.text = DateTime.now().toString();
     var tempSeminarConductList = await SeminarConduct().seminarConductDDL();
+    var temprrlist = await MST_RR_Distribution().selectRRDDL();
     setState(() {
       seminarConductList = tempSeminarConductList;
+      RRList = temprrlist;
     });
   }
 
   SingleSelectController seminarConductController = SingleSelectController("");
+  SingleSelectController rrcontroller = SingleSelectController("");
   SingleSelectController memberController = SingleSelectController("");
+  int RRID = -1;
+  bool isFirstDropdownDisabled = false;
+  bool isSecondDropdownDisabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +76,37 @@ class _RemunerationState extends State<Remuneration> {
                 child: ListView(
                   children: [
                     CustomeDropdown(
+                      list: RRList,
+                      targetDropdownValue: "RRDDate",
+                      dropdownTitle: "Select RR Distribution Date",
+                      dropdownValue: rrcontroller,
+                      targetID: 'RRDID',
+                      onChanged: (distribution) async {
+                        setState(() {
+                          isSecondDropdownDisabled =
+                              true; // Disable second dropdown
+                          isFirstDropdownDisabled =
+                              false; // Ensure the first dropdown is enabled
+                          RRID = distribution['RRDID'];
+                        });
+
+                        var tempDistList=await MST_RR_Distribution().selectAmount(RRID);
+
+                        setState(() {
+                          distributionDetail=tempDistList;
+                          showDetails = true;
+                        });
+                      },
+                      enable:
+                          !isFirstDropdownDisabled, // Disable/Enable based on flag
+                    ),
+                    SizedBox(
+                      height: 0.1.h,
+                    ),
+                    Container(
+                      child: Center(child: Text("OR",style: TextStyle(fontSize: 19.sp,color: ColorTheme().PRIMARY_COLOR,fontWeight: FontWeight.bold),)),
+                    ),
+                    CustomeDropdown(
                       list: seminarConductList,
                       targetDropdownValue: "SeminarTitle",
                       dropdownTitle: "Select Seminar",
@@ -73,13 +115,18 @@ class _RemunerationState extends State<Remuneration> {
                       idxToDisplay: "SeminarConductID",
                       onChanged: (seminar) async {
                         setState(() {
+                          isFirstDropdownDisabled =
+                              true; // Disable first dropdown
+                          isSecondDropdownDisabled =
+                              false; // Ensure the second dropdown is enabled
                           seminarConductID = seminar['SeminarConductID'];
                         });
                         var tempSeminarDetails = await SeminarConduct()
                             .selectConductedSeminarDetails(seminarConductID);
                         var tempSeminarWiseMembers = await Member()
                             .selectMemberBySeminarConductID(seminarConductID);
-                        Map<String,dynamic> data = await Remunerationn().selectRemainingAmount(seminarConductID);
+                        Map<String, dynamic> data = await Remunerationn()
+                            .selectRemainingAmount(seminarConductID);
                         setState(() {
                           seminarDetails = tempSeminarDetails;
                           seminarWiseMembers = tempSeminarWiseMembers;
@@ -87,6 +134,8 @@ class _RemunerationState extends State<Remuneration> {
                           showDetails = true;
                         });
                       },
+                      enable:
+                          !isSecondDropdownDisabled, // Disable/Enable based on flag
                     ),
                     SizedBox(
                       height: 0.1.h,
@@ -94,7 +143,7 @@ class _RemunerationState extends State<Remuneration> {
                     SizedBox(
                       height: 0.1.h,
                     ),
-                    showDetails
+                    isSecondDropdownDisabled
                         ? Card(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -103,40 +152,13 @@ class _RemunerationState extends State<Remuneration> {
                                   Row(
                                     children: [
                                       Text(
-                                        "Total Teacher: ",
+                                        "Total Expanse: ",
                                         style: TextStyle(fontSize: 18.sp),
                                       ),
                                       Text(
-                                        seminarDetails['TotalTeacher']
+                                        distributionDetail['TotalExpence']
                                             .toString(),
                                         style: TextStyle(fontSize: 18.sp),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Total Student: ",
-                                        style: TextStyle(fontSize: 18.sp),
-                                      ),
-                                      Text(
-                                        seminarDetails['TotalStudent']
-                                            .toString(),
-                                        style: TextStyle(fontSize: 18.sp),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Total Expense: ",
-                                        style: TextStyle(fontSize: 18.sp),
-                                      ),
-                                      Text(
-                                        seminarDetails['TotalExpence']
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontSize: 18.sp, color: Colors.red),
                                       )
                                     ],
                                   ),
@@ -147,17 +169,81 @@ class _RemunerationState extends State<Remuneration> {
                                         style: TextStyle(fontSize: 18.sp),
                                       ),
                                       Text(
-                                        remainingAmount
+                                        distributionDetail['RemainingAmount']
                                             .toString(),
-                                        style: TextStyle(
-                                            fontSize: 18.sp, color: Colors.red),
+                                        style: TextStyle(fontSize: 18.sp,color: Colors.red,fontWeight: FontWeight.bold),
                                       )
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
                           )
+                        : Container(),
+
+                    isFirstDropdownDisabled
+                        ? Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Total Teacher : ",
+                                  style: TextStyle(fontSize: 18.sp),
+                                ),
+                                Text(
+                                  seminarDetails['TotalTeacher']
+                                      .toString(),
+                                  style: TextStyle(fontSize: 18.sp),
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Total Student: ",
+                                  style: TextStyle(fontSize: 18.sp),
+                                ),
+                                Text(
+                                  seminarDetails['TotalStudent']
+                                      .toString(),
+                                  style: TextStyle(fontSize: 18.sp),
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Total Expense: ",
+                                  style: TextStyle(fontSize: 18.sp),
+                                ),
+                                Text(
+                                  seminarDetails['TotalExpence']
+                                      .toString(),
+                                  style: TextStyle(
+                                      fontSize: 18.sp, color: Colors.red),
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Remaining Amount: ",
+                                  style: TextStyle(fontSize: 18.sp),
+                                ),
+                                Text(
+                                  remainingAmount.toString(),
+                                  style: TextStyle(
+                                      fontSize: 18.sp, color: Colors.red),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    )
                         : Container(),
                     SizedBox(
                       height: 0.1.h,
@@ -180,7 +266,7 @@ class _RemunerationState extends State<Remuneration> {
                       ),
                     ),
                     SizedBox(
-                      height: 0.5.h,
+                      height: 0.1.h,
                     ),
                     Row(
                       children: [
@@ -214,7 +300,7 @@ class _RemunerationState extends State<Remuneration> {
                       ],
                     ),
                     SizedBox(
-                      height: 1.h,
+                      height: 0.1.h,
                     ),
                     Row(
                       children: [
@@ -240,7 +326,7 @@ class _RemunerationState extends State<Remuneration> {
                       ],
                     ),
                     SizedBox(
-                      height: 1.h,
+                      height: 0.1.h,
                     ),
                     ElevatedButton(
                         onPressed: () async {
@@ -259,9 +345,12 @@ class _RemunerationState extends State<Remuneration> {
                               totalPaidAmount, seminarConductID);
                           await Remunerationn().updateRemunerationAmount(
                               seminarConductID, totalPaidAmount);
-                          Map<String,dynamic> remainingAmountData = await Remunerationn().selectRemainingAmount(seminarConductID);
+                          Map<String, dynamic> remainingAmountData =
+                              await Remunerationn()
+                                  .selectRemainingAmount(seminarConductID);
                           setState(() {
-                            remainingAmount = remainingAmountData['RemainingAmount'];
+                            remainingAmount =
+                                remainingAmountData['RemainingAmount'];
                           });
                         },
                         child: Text("Save"))
