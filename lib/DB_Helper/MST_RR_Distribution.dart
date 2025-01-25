@@ -40,4 +40,17 @@ class MST_RR_Distribution {
     AmountList = await db.rawQuery(query,[RRDID]);
     return AmountList.isNotEmpty?AmountList.first:Map();
   }
+
+  Future<void> inserRRIDtIntoRemuneration(int RRDID) async {
+    Database db = await SchoolVisitDB().initDatabase();
+    await db.rawInsert('INSERT INTO Remuneration (RRDID) VALUES (?)', [RRDID]);
+  }
+
+  Future<void> updateRemainingAmountForRR(int paidAmount,int RRID) async {
+    Database db = await SchoolVisitDB().initDatabase();
+    String query = '''UPDATE  MST_RR_Distribution
+                      SET RemainingAmount = RemainingAmount - ?
+                      WHERE MST_RR_Distribution.RRDID = ?''';
+    await db.rawUpdate(query,[paidAmount,RRID]);
+  }
 }

@@ -32,6 +32,7 @@ class _RemunerationState extends State<Remuneration> {
   List<dynamic> seminarConductList = [];
   List<dynamic> seminarWiseMembers = [];
   List<dynamic> RRList = [];
+  List<dynamic> RRMemberList = [];
   Map<String, dynamic> seminarDetails = Map();
   int seminarConductID = -1;
   int memberID = -1;
@@ -51,15 +52,18 @@ class _RemunerationState extends State<Remuneration> {
     datePickerController.text = DateTime.now().toString();
     var tempSeminarConductList = await SeminarConduct().seminarConductDDL();
     var temprrlist = await MST_RR_Distribution().selectRRDDL();
+    var tempMemberList = await Member().selectMemberDDL()!;
     setState(() {
       seminarConductList = tempSeminarConductList;
       RRList = temprrlist;
+      RRMemberList=tempMemberList;
     });
   }
 
   SingleSelectController seminarConductController = SingleSelectController("");
   SingleSelectController rrcontroller = SingleSelectController("");
   SingleSelectController memberController = SingleSelectController("");
+  SingleSelectController rrmemberController = SingleSelectController("");
   int RRID = -1;
   bool isFirstDropdownDisabled = false;
   bool isSecondDropdownDisabled = false;
@@ -81,6 +85,7 @@ class _RemunerationState extends State<Remuneration> {
                       dropdownTitle: "Select RR Distribution Date",
                       dropdownValue: rrcontroller,
                       targetID: 'RRDID',
+                      idxToDisplay: "RRDID",
                       onChanged: (distribution) async {
                         setState(() {
                           isSecondDropdownDisabled =
@@ -309,7 +314,18 @@ class _RemunerationState extends State<Remuneration> {
                           style: TextStyle(fontSize: 17.sp),
                         ),
                         Expanded(
-                          child: CustomeDropdown(
+                          child: RRID!=-1?CustomeDropdown(
+                            list: RRMemberList,
+                            dropdownValue: rrmemberController,
+                            targetDropdownValue: "MemberName",
+                            dropdownTitle: "Select Member",
+                            targetID: 'MemberID',
+                            onChanged: (memberDetail) {
+                              setState(() {
+                                memberID = memberDetail['MemberID'];
+                              });
+                            },
+                          ): CustomeDropdown(
                             list: seminarWiseMembers,
                             targetDropdownValue: "MemberName",
                             dropdownTitle: "Select Member",
@@ -332,25 +348,35 @@ class _RemunerationState extends State<Remuneration> {
                         onPressed: () async {
                           String date = Functions()
                               .formateDate(datePickerController.text);
-                          Map<String, dynamic> data = {
+                          Map<String, dynamic> dataforseminar = {
                             "SeminarConductID": seminarConductID,
                             "RemunerationPaidDate": date,
                             "AmountPaid": amountController.text,
                             "AmountGivenTo": memberID
                           };
-                          int totalPaidAmount =
-                              int.parse(amountController.text);
-                          await MST_Remuneration().insertInRemuneration(data);
-                          await SeminarConduct().updateRemainingAmount(
-                              totalPaidAmount, seminarConductID);
-                          await Remunerationn().updateRemunerationAmount(
-                              seminarConductID, totalPaidAmount);
-                          Map<String, dynamic> remainingAmountData =
-                              await Remunerationn()
-                                  .selectRemainingAmount(seminarConductID);
+
+                          Map<String, dynamic> dataForRR = {
+                            "RRDID": RRID,
+                            "RemunerationPaidDate": date,
+                            "AmountPaid": amountController.text,
+                            "AmountGivenTo": memberID
+                          };
+
+
+                          int totalPaidAmount = int.parse(amountController.text);
+                          RRID!=-1?await MST_Remuneration().insertInRemunerationForRR(dataForRR):await MST_Remuneration().insertInRemunerationForSeminar(dataforseminar);
+                          RRID==1?await SeminarConduct().updateRemainingAmount(totalPaidAmount, seminarConductID):await MST_RR_Distribution().updateRemainingAmountForRR(totalPaidAmount,RRID);
+                          RRID==-1?await Remunerationn().updateRemunerationAmount(seminarConductID, totalPaidAmount):await Remunerationn().updateRemunerationAmountForRR(RRID,totalPaidAmount);
+                          Map<String, dynamic> remainingAmountData=Map();
+
+                          if(RRID==-1){
+                            remainingAmountData=await Remunerationn().selectRemainingAmount(seminarConductID);
+                          }else{
+                            remainingAmountData=await Remunerationn().selectRemainingAmountForRR(RRID);
+                          }
+
                           setState(() {
-                            remainingAmount =
-                                remainingAmountData['RemainingAmount'];
+                            remainingAmount = remainingAmountData['RemainingAmount'];
                           });
                         },
                         child: Text("Save"))
