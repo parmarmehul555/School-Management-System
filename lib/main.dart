@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_management_system/Screens/RR_DistributionScreen.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
+              ),
+              radioTheme: RadioThemeData(
+                fillColor: MaterialStateProperty.all(ColorTheme().PRIMARY_COLOR),
               ),
               scaffoldBackgroundColor: Colors.grey.shade200,
               appBarTheme: AppBarTheme(

@@ -38,7 +38,7 @@ class _RemunerationState extends State<Remuneration> {
   int memberID = -1;
   int remainingAmount = 0;
   List<dynamic> filteredSeminarConductList = [];
-  Map<String,dynamic> distributionDetail=Map();
+  Map<String, dynamic> distributionDetail = Map();
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _RemunerationState extends State<Remuneration> {
     setState(() {
       seminarConductList = tempSeminarConductList;
       RRList = temprrlist;
-      RRMemberList=tempMemberList;
+      RRMemberList = tempMemberList;
     });
   }
 
@@ -87,29 +87,41 @@ class _RemunerationState extends State<Remuneration> {
                       targetID: 'RRDID',
                       idxToDisplay: "RRDID",
                       onChanged: (distribution) async {
+                        print("RRDID IS ${distribution['RRDID']}");
                         setState(() {
                           isSecondDropdownDisabled =
                               true; // Disable second dropdown
                           isFirstDropdownDisabled =
                               false; // Ensure the first dropdown is enabled
-                          RRID = distribution['RRDID'];
+                          setState(() {
+                            RRID = distribution['RRDID'];
+                          });
                         });
 
-                        var tempDistList=await MST_RR_Distribution().selectAmount(RRID);
+                        var tempDistList =
+                            await MST_RR_Distribution().selectAmount(RRID);
+                        print(tempDistList);
 
                         setState(() {
-                          distributionDetail=tempDistList;
+                          distributionDetail = tempDistList;
                           showDetails = true;
                         });
                       },
                       enable:
                           !isFirstDropdownDisabled, // Disable/Enable based on flag
-                    ),
-                    SizedBox(
-                      height: 0.1.h,
-                    ),
-                    Container(
-                      child: Center(child: Text("OR",style: TextStyle(fontSize: 19.sp,color: ColorTheme().PRIMARY_COLOR,fontWeight: FontWeight.bold),)),
+                            ),
+                            SizedBox(
+                              height: 0.1.h,
+                            ),
+                            Container(
+                              child: Center(
+                                  child: Text(
+                                    "OR",
+                                    style: TextStyle(
+                                        fontSize: 19.sp,
+                                        color: ColorTheme().PRIMARY_COLOR,
+                                        fontWeight: FontWeight.bold),
+                      )),
                     ),
                     CustomeDropdown(
                       list: seminarConductList,
@@ -176,7 +188,10 @@ class _RemunerationState extends State<Remuneration> {
                                       Text(
                                         distributionDetail['RemainingAmount']
                                             .toString(),
-                                        style: TextStyle(fontSize: 18.sp,color: Colors.red,fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 18.sp,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold),
                                       )
                                     ],
                                   ),
@@ -185,70 +200,69 @@ class _RemunerationState extends State<Remuneration> {
                             ),
                           )
                         : Container(),
-
                     isFirstDropdownDisabled
                         ? Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "Total Teacher : ",
-                                  style: TextStyle(fontSize: 18.sp),
-                                ),
-                                Text(
-                                  seminarDetails['TotalTeacher']
-                                      .toString(),
-                                  style: TextStyle(fontSize: 18.sp),
-                                )
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Total Teacher : ",
+                                        style: TextStyle(fontSize: 18.sp),
+                                      ),
+                                      Text(
+                                        seminarDetails['TotalTeacher']
+                                            .toString(),
+                                        style: TextStyle(fontSize: 18.sp),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Total Student: ",
+                                        style: TextStyle(fontSize: 18.sp),
+                                      ),
+                                      Text(
+                                        seminarDetails['TotalStudent']
+                                            .toString(),
+                                        style: TextStyle(fontSize: 18.sp),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Total Expense: ",
+                                        style: TextStyle(fontSize: 18.sp),
+                                      ),
+                                      Text(
+                                        seminarDetails['TotalExpence']
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: 18.sp, color: Colors.red),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Remaining Amount: ",
+                                        style: TextStyle(fontSize: 18.sp),
+                                      ),
+                                      Text(
+                                        remainingAmount.toString(),
+                                        style: TextStyle(
+                                            fontSize: 18.sp, color: Colors.red),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Total Student: ",
-                                  style: TextStyle(fontSize: 18.sp),
-                                ),
-                                Text(
-                                  seminarDetails['TotalStudent']
-                                      .toString(),
-                                  style: TextStyle(fontSize: 18.sp),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Total Expense: ",
-                                  style: TextStyle(fontSize: 18.sp),
-                                ),
-                                Text(
-                                  seminarDetails['TotalExpence']
-                                      .toString(),
-                                  style: TextStyle(
-                                      fontSize: 18.sp, color: Colors.red),
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Remaining Amount: ",
-                                  style: TextStyle(fontSize: 18.sp),
-                                ),
-                                Text(
-                                  remainingAmount.toString(),
-                                  style: TextStyle(
-                                      fontSize: 18.sp, color: Colors.red),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    )
+                          )
                         : Container(),
                     SizedBox(
                       height: 0.1.h,
@@ -314,30 +328,32 @@ class _RemunerationState extends State<Remuneration> {
                           style: TextStyle(fontSize: 17.sp),
                         ),
                         Expanded(
-                          child: RRID!=-1?CustomeDropdown(
-                            list: RRMemberList,
-                            dropdownValue: rrmemberController,
-                            targetDropdownValue: "MemberName",
-                            dropdownTitle: "Select Member",
-                            targetID: 'MemberID',
-                            onChanged: (memberDetail) {
-                              setState(() {
-                                memberID = memberDetail['MemberID'];
-                              });
-                            },
-                          ): CustomeDropdown(
-                            list: seminarWiseMembers,
-                            targetDropdownValue: "MemberName",
-                            dropdownTitle: "Select Member",
-                            dropdownValue: memberController,
-                            targetID: 'MemberID',
-                            onChanged: (member) {
-                              print(member);
-                              setState(() {
-                                memberID = member['MemberID'];
-                              });
-                            },
-                          ),
+                          child: RRID != -1
+                              ? CustomeDropdown(
+                                  list: RRMemberList,
+                                  dropdownValue: rrmemberController,
+                                  targetDropdownValue: "MemberName",
+                                  dropdownTitle: "Select Member",
+                                  targetID: 'MemberID',
+                                  onChanged: (memberDetail) {
+                                    setState(() {
+                                      memberID = memberDetail['MemberID'];
+                                    });
+                                  },
+                                )
+                              : CustomeDropdown(
+                                  list: seminarWiseMembers,
+                                  targetDropdownValue: "MemberName",
+                                  dropdownTitle: "Select Member",
+                                  dropdownValue: memberController,
+                                  targetID: 'MemberID',
+                                  onChanged: (member) {
+                                    print(member);
+                                    setState(() {
+                                      memberID = member['MemberID'];
+                                    });
+                                  },
+                                ),
                         ),
                       ],
                     ),
@@ -362,21 +378,42 @@ class _RemunerationState extends State<Remuneration> {
                             "AmountGivenTo": memberID
                           };
 
+                          int totalPaidAmount =
+                              int.parse(amountController.text);
+                          RRID != -1
+                              ? await MST_Remuneration()
+                                  .insertInRemunerationForRR(dataForRR)
+                              : await MST_Remuneration()
+                                  .insertInRemunerationForSeminar(
+                                      dataforseminar);
+                          RRID == -1
+                              ? await SeminarConduct().updateRemainingAmount(
+                                  totalPaidAmount, seminarConductID)
+                              : await MST_RR_Distribution()
+                                  .updateRemainingAmountForRR(
+                                      totalPaidAmount, RRID);
+                          RRID == -1
+                              ? await Remunerationn().updateRemunerationAmount(
+                                  seminarConductID, totalPaidAmount)
+                              : await Remunerationn()
+                                  .updateRemunerationAmountForRR(
+                                      RRID, totalPaidAmount);
+                          Map<String, dynamic> remainingAmountData = Map();
 
-                          int totalPaidAmount = int.parse(amountController.text);
-                          RRID!=-1?await MST_Remuneration().insertInRemunerationForRR(dataForRR):await MST_Remuneration().insertInRemunerationForSeminar(dataforseminar);
-                          RRID==1?await SeminarConduct().updateRemainingAmount(totalPaidAmount, seminarConductID):await MST_RR_Distribution().updateRemainingAmountForRR(totalPaidAmount,RRID);
-                          RRID==-1?await Remunerationn().updateRemunerationAmount(seminarConductID, totalPaidAmount):await Remunerationn().updateRemunerationAmountForRR(RRID,totalPaidAmount);
-                          Map<String, dynamic> remainingAmountData=Map();
-
-                          if(RRID==-1){
-                            remainingAmountData=await Remunerationn().selectRemainingAmount(seminarConductID);
-                          }else{
-                            remainingAmountData=await Remunerationn().selectRemainingAmountForRR(RRID);
+                          if (RRID == -1) {
+                            remainingAmountData = await Remunerationn()
+                                .selectRemainingAmount(seminarConductID);
+                          } else {
+                            var tempDistributionDetail = await Remunerationn()
+                                .selectRemainingAmountForRR(RRID);
+                            setState(() {
+                              distributionDetail = tempDistributionDetail;
+                            });
                           }
 
                           setState(() {
-                            remainingAmount = remainingAmountData['RemainingAmount'];
+                            remainingAmount =
+                                remainingAmountData['RemainingAmount'];
                           });
                         },
                         child: Text("Save"))

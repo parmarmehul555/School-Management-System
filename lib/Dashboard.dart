@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_management_system/Paid_Remuneration.dart';
 import 'package:school_management_system/Pending_Remuneration.dart';
 import 'package:school_management_system/RR_Distribution.dart';
 import 'package:school_management_system/Remuneration.dart';
+import 'package:school_management_system/Screens/RR_DistributionScreen.dart';
 import 'package:school_management_system/Seminar_Conduct.dart';
 import 'package:school_management_system/Updata_Contact.dart';
 import 'package:school_management_system/database/SchoolVisitDB.dart';
@@ -10,6 +10,7 @@ import 'package:school_management_system/utils/Clip.dart';
 import 'package:school_management_system/utils/theme.dart';
 import 'package:sizer/sizer.dart';
 import 'CustomWidget/DashboardTile.dart';
+import 'PaidRemuneration.dart';
 
 class DashboardScreen extends StatelessWidget {
   Color get PRIMARY_COLOR => Colors.blue.shade700;
@@ -68,7 +69,7 @@ class DashboardScreen extends StatelessWidget {
                          GestureDetector(
                            onTap: () =>
                                Navigator.of(context).push(MaterialPageRoute(
-                                 builder: (context) => RR_Distribution(),
+                                 builder: (context) => RrDistributionScreen(),
                                )),
                            child: DashboardTile(
                              icon: Icons.calendar_today,
@@ -127,17 +128,22 @@ class DashboardScreen extends StatelessWidget {
                              primaryColor: PRIMARY_COLOR,
                            ),
                          ),
-                         GestureDetector(
-                           onTap: () =>
-                               Navigator.of(context).push(MaterialPageRoute(
-                                 builder: (context) => PaidRemuneration(),
-                               )),
-                           child: DashboardTile(
-                             icon: Icons.payment,
-                             label: "Paid Remuneration",
-                             primaryColor: PRIMARY_COLOR,
-                           ),
-                         ),
+
+
+                         // GestureDetector(
+                         //   onTap: () =>
+                         //       Navigator.of(context).push(MaterialPageRoute(
+                         //         builder: (context) => PaidRemuneration(),
+                         //       )),
+                         //   child: DashboardTile(
+                         //     icon: Icons.payment,
+                         //     label: "Paid Remuneration",
+                         //     primaryColor: PRIMARY_COLOR,
+                         //   ),
+                         // ),
+
+
+
                          // DashboardTile(
                          //   icon: Icons.assignment,
                          //   label: "Exam Schedule",

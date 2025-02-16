@@ -1,36 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:school_management_system/CustomWidget/CustomeDropDown.dart';
-import 'package:school_management_system/DB_Helper/Remuneration.dart';
 import 'package:sizer/sizer.dart';
 
-class RRDistributionPendingRemuneration extends StatefulWidget {
-  const RRDistributionPendingRemuneration({super.key});
+class SeminarPaidRemuneration extends StatefulWidget {
+  String? from;
+  String? to;
+  SeminarPaidRemuneration({required this.from,required this.to});
 
   @override
-  State<RRDistributionPendingRemuneration> createState() => _RRDistributionPendingRemunerationState();
+  State<SeminarPaidRemuneration> createState() => _SeminarPaidRemunerationState();
 }
 
-class _RRDistributionPendingRemunerationState extends State<RRDistributionPendingRemuneration> {
-  List<dynamic> RRDistributionWisePendingRemuneration = [];
+class _SeminarPaidRemunerationState extends State<SeminarPaidRemuneration> {
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    var tempDistributionWisePending = await Remunerationn().selectRRDistributionWisePendingRemuneration();
-  setState(() {
-    RRDistributionWisePendingRemuneration = tempDistributionWisePending;
-  });
+    // print("From date is ${widget.from} && To date is ${widget.to}");
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RRDistributionWisePendingRemuneration.isNotEmpty
-          ? ListView.builder(
-        itemCount: RRDistributionWisePendingRemuneration.length,
+      body: ListView.builder(
+        itemCount: 1,
         itemBuilder: (context, index) {
           return Padding(
             padding:
@@ -42,34 +33,34 @@ class _RRDistributionPendingRemunerationState extends State<RRDistributionPendin
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'RR Dist. Date : ${RRDistributionWisePendingRemuneration[index]['RRDDate']}',
+                      'Seminar Date : Nothing}',
                       style: TextStyle(fontSize: 17.sp),
                     ),
                     Text(
-                      'School : ${RRDistributionWisePendingRemuneration[index]['SchoolName']}',
+                      'School : Nothing}',
                       style: TextStyle(fontSize: 17.sp),
                     ),
                     Text(
-                      'Purpose Title : ${RRDistributionWisePendingRemuneration[index]['PurposeTitle']}',
+                      'Seminar Title : Nothing}',
                       style: TextStyle(
                         fontSize: 17.sp,
                       ),
                     ),
                     Text(
-                      'Total Amount : ${RRDistributionWisePendingRemuneration[index]['TotalExpence']}',
+                      'Total Amount : Nothing}',
                       style: TextStyle(
                         fontSize: 17.sp,
                       ),
                     ),
                     Text(
-                      'Paid Amount : ${RRDistributionWisePendingRemuneration[index]['PaidAmount']}',
+                      'Paid Amount : Nothing}',
                       style: TextStyle(
                           fontSize: 17.sp,
                           color: Colors.green,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'Remaining Amount : ${RRDistributionWisePendingRemuneration[index]['RemainingAmount']}',
+                      'Remaining Amount : Nothing}',
                       style: TextStyle(
                           fontSize: 17.sp,
                           color: Colors.red,
@@ -82,9 +73,6 @@ class _RRDistributionPendingRemunerationState extends State<RRDistributionPendin
           );
         },
       )
-          : Center(
-          child:Text("No Data Found!")
-      ),
     );
   }
 }

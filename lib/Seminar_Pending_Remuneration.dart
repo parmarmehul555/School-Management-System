@@ -34,12 +34,17 @@ class _SeminarPendingRemunerationState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: seminarWisePendingRemuneration.isNotEmpty
-            ? ListView.builder(
-                itemCount: seminarWisePendingRemuneration.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4,vertical: 0),
+      body: seminarWisePendingRemuneration.isNotEmpty
+          ? ListView.builder(
+              itemCount: seminarWisePendingRemuneration.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                  child: InkWell(
+                    onTap: () {
+                      print(seminarWisePendingRemuneration[index]);
+                    },
                     child: Card(
                       child: Padding(
                         padding: EdgeInsets.all(12.sp),
@@ -57,10 +62,11 @@ class _SeminarPendingRemunerationState
                             Text(
                               'Seminar Title : ${seminarWisePendingRemuneration[index]['SeminarTitle']}',
                               style: TextStyle(
-                                  fontSize: 17.sp,),
+                                fontSize: 17.sp,
+                              ),
                             ),
                             Text(
-                              'Total Amount : ${seminarWisePendingRemuneration[index]['TotalAmount']}',
+                              'Total Amount : ${seminarWisePendingRemuneration[index]['TotalExpence']}',
                               style: TextStyle(
                                 fontSize: 17.sp,
                               ),
@@ -68,29 +74,28 @@ class _SeminarPendingRemunerationState
                             Text(
                               'Paid Amount : ${seminarWisePendingRemuneration[index]['PaidAmount']}',
                               style: TextStyle(
-                                fontSize: 17.sp,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold
-                              ),
+                                  fontSize: 17.sp,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Remaining Amount : ${seminarWisePendingRemuneration[index]['RemainingAmount']}',
                               style: TextStyle(
                                   fontSize: 17.sp,
                                   color: Colors.red,
-                                  fontWeight: FontWeight.bold
-                              ),
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  );
-                },
-              )
-            : Center(
-                child: CircularProgressIndicator(
-                color: ColorTheme().PRIMARY_COLOR,
-              )));
+                  ),
+                );
+              },
+            )
+          : Center(
+              child:Text("No Data Found!")
+            ),
+    );
   }
 }

@@ -42,17 +42,25 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
           .toList(),
       hintText: widget.dropdownTitle,
       onChanged: (selectedValue) {
-        print('from custome widget $selectedValue');
+        int selectedID = -1;
+          String tempSelectedValue = selectedValue.toString();
         setState(() {
           widget.dropdownValue?.value = selectedValue;
           if(selectedValue.toString().contains(' | ')){
+            selectedID = int.parse(selectedValue.toString().split(' | ')[0]);
             selectedValue = selectedValue.toString().split(' | ')[1];
           }
         });
         if (widget.targetID!.isNotEmpty) {
+          if(tempSelectedValue.contains(' | ')){
+            Map<dynamic, dynamic> tempObj = widget.list.firstWhere((element) =>
+            element[widget.targetDropdownValue] == selectedValue && element[widget.targetID] == selectedID);
+            widget.onChanged?.call(tempObj);
+          }else{
           Map<dynamic, dynamic> tempObj = widget.list.firstWhere((element) =>
               element[widget.targetDropdownValue] == selectedValue);
           widget.onChanged?.call(tempObj);
+          }
         }
       },
     );
