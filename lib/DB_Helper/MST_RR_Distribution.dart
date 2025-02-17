@@ -5,8 +5,8 @@ class MST_RR_Distribution {
   Future<int> insertIntoMST_RR_Distribution(Map<String, dynamic> data) async {
     Database db = await SchoolVisitDB().initDatabase();
     String q = ''' INSERT INTO MST_RR_Distribution
-                      (PurposeID,SchoolID,SeminarID,InterestInCampusVisit,TotalNumberOfCopies,RRDDate,CarOwner,TotalExpence,RemainingAmount) 
-                      values (?,?,?,?,?,?,?,?,?)
+                      (PurposeID,SchoolID,SeminarID,InterestInCampusVisit,TotalNumberOfCopies,RRDDate) 
+                      values (?,?,?,?,?,?)
     ''';
     int RRDID = await db.rawInsert(q, [
       data['PurposeID'],
@@ -14,10 +14,7 @@ class MST_RR_Distribution {
       data['SeminarID'],
       data['InterestInCampusVisit'],
       data['TotalNumberOfCopies'],
-      data['RRDDate'],
-      data['CarOwner'],
-      data['TotalExpence'],
-      data['TotalExpence'],
+      data['RRDDate']
     ]);
     return RRDID;
   }

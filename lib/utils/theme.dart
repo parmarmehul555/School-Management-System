@@ -13,6 +13,7 @@ class ColorTheme{
   // Color get whiteColor => Colors.white;
   // Color kPrimaryBackgroundColor =Colors.indigo;
   // Color get PRIMARY_COLOR => Color.fromRGBO(81, 86, 253, 1.0);
-  Color get PRIMARY_COLOR => Colors.blue.shade700;
+  // Color get PRIMARY_COLOR => Colors.blue.shade700;
+  Color get PRIMARY_COLOR => Colors.teal;
   Color get SECONDARY_COLOR => Colors.white;
 }
