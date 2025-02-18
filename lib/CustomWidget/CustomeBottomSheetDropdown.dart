@@ -41,7 +41,6 @@ class CustomeBottomSheetDropdownState
     filteredList = List.from(widget.list);
   }
 
-
   void _filterList(String value) {
     setState(() {
       if (value.isEmpty) {
@@ -157,7 +156,7 @@ class CustomeBottomSheetDropdownState
           decoration: InputDecoration(
             isDense: true,
             prefixIcon: Icon(widget.icon, color: widget.iconColor),
-            suffixIcon: const Icon(Icons.arrow_drop_down),
+            suffixIcon: const Icon(Icons.arrow_drop_down, size: 25),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           ),
           child: Text(widget.selectedValue ?? widget.dropdownTitle),

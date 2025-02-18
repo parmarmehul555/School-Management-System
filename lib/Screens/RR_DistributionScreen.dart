@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:school_management_system/CustomWidget/CustomeBottomSheetDropdown.dart';
 import 'package:school_management_system/CustomWidget/CustomeTextField.dart';
@@ -26,6 +28,10 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
   String? purposeName;
   String? schoolName;
   String? reasonName;
+  int totalStudent = 0;
+  int selectedCourseID = 0;
+
+  DateTime? date;
 
   bool isDataInserting = false;
 
@@ -54,13 +60,12 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
     isLoading = true;
     filteredCategories = categories;
     DateTime currentDate = DateTime.now();
+    date = currentDate;
     selectedDate.text =
         '${currentDate.day.toString().padLeft(2, '0')}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.year}';
     _loadData();
     isLoading = false;
   }
-
-  String? selectedCourse;
 
   String? selectedValue;
 
@@ -103,7 +108,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.date_range_rounded,
-                          color: Colors.purpleAccent,
+                          color: ColorTheme().PRIMARY_COLOR,
                         ),
                         isDense: true,
                         focusedBorder: OutlineInputBorder(),
@@ -125,7 +130,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                     bottomSheetTitle: 'Purpose',
                     dropdownTitle: "Select Purpose",
                     icon: Icons.account_tree_outlined,
-                    iconColor: Colors.red,
+                    iconColor: ColorTheme().PRIMARY_COLOR,
                     onItemSelected: (purposeDetail) {
                       setState(() {
                         collectedData["PurposeID"] = purposeDetail['PurposeID'];
@@ -139,16 +144,16 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                   CustomeBottomSheetDropdown(
                     list: schoolList,
                     selectedValue: schoolName,
-                    listAccessName: 'SchoolShortName',
+                    listAccessName: 'SchoolWithCity',
                     listAccessKey: 'SchoolID',
                     bottomSheetTitle: 'School',
                     dropdownTitle: "Select School",
                     icon: Icons.apartment,
-                    iconColor: Colors.green,
+                    iconColor: ColorTheme().PRIMARY_COLOR,
                     onItemSelected: (schoolDetail) {
                       setState(() {
                         collectedData["SchoolID"] = schoolDetail['SchoolID'];
-                        schoolName = schoolDetail["SchoolShortName"];
+                        schoolName = schoolDetail["SchoolWithCity"];
                       });
                     },
                   ),
@@ -163,7 +168,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                     bottomSheetTitle: 'Reason',
                     dropdownTitle: "Select Reason",
                     icon: Icons.help,
-                    iconColor: Colors.orangeAccent,
+                    iconColor: ColorTheme().PRIMARY_COLOR,
                     onItemSelected: (seminarDetail) {
                       setState(() {
                         collectedData["SeminarID"] = seminarDetail['SeminarID'];
@@ -211,7 +216,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                   CustomeTextField(
                     controller: totalNumberOfCopiesController,
                     icon: Icons.numbers,
-                    iconColor: Colors.cyan,
+                    iconColor: ColorTheme().PRIMARY_COLOR,
                     hintText: "Enter Total Number Of Copies",
                   ),
                   SizedBox(
@@ -235,20 +240,18 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                             children: [
                               CustomeBottomSheetDropdown(
                                 list: courseList,
-                                selectedValue: selectedCourse,
+                                selectedValue: courseName,
                                 listAccessName: 'CourseName',
                                 listAccessKey: 'CourseID',
                                 bottomSheetTitle: 'Standard',
                                 dropdownTitle: "Select Course",
                                 icon: Icons.account_tree_outlined,
-                                iconColor: Colors.red,
+                                iconColor: ColorTheme().PRIMARY_COLOR,
                                 onItemSelected: (courseDetails) {
                                   setState(() {
                                     courseName = courseDetails['CourseName'];
-                                    selectedCourse =
-                                        courseDetails['CourseName'];
-                                    courseDropdownList
-                                        .add(courseDetails['CourseID']);
+                                    selectedCourseID =
+                                        courseDetails['CourseID'];
                                   });
                                 },
                               ),
@@ -259,7 +262,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                               CustomeTextField(
                                 controller: courseWiseStudentTotalController,
                                 icon: Icons.numbers,
-                                iconColor: Colors.cyan,
+                                iconColor: ColorTheme().PRIMARY_COLOR,
                                 hintText: "Number of Students",
                               ),
                             ],
@@ -270,6 +273,13 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                           child: InkWell(
                             onTap: () {
                               ShowAlertDialog dialog = ShowAlertDialog();
+                              for (var element in courseWiseStudent) {
+                                if (element['CourseName'] == courseName) {
+                                  dialog.showDialog(context, "Alert",
+                                      "$courseName is already selected! Please select another course!");
+                                  return;
+                                }
+                              }
                               if ((courseName == null || courseName == "") &&
                                   courseWiseStudentTotalController
                                       .text.isEmpty) {
@@ -298,10 +308,12 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                                       courseWiseStudentTotalController.text
                                 };
                                 courseWiseStudent.add(temp);
+                                courseDropdownList.add(selectedCourseID);
+                                totalStudent += int.parse(
+                                    courseWiseStudentTotalController.text);
                               });
                               setState(() {
-                                selectedCourse = null;
-                                courseName = "";
+                                courseName = null;
                                 courseWiseStudentTotalController.clear();
                               });
                             },
@@ -408,6 +420,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                                 courseDropdownList.clear();
                                 courseName = null;
                                 courseWiseStudentTotalController.clear();
+                                totalStudent = 0;
                               });
                               return;
                             }
@@ -472,6 +485,7 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                               courseDropdownList.clear();
                               courseName = null;
                               courseWiseStudentTotalController.clear();
+                              totalStudent = 0;
                             });
                           },
                           style: ElevatedButton.styleFrom(
@@ -490,6 +504,24 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                             ),
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 0.5.h,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Total Student : ",
+                        style: TextStyle(fontSize: 17.sp),
+                      ),
+                      Text(
+                        totalStudent < 0 ? "0" : totalStudent.toString(),
+                        style: TextStyle(
+                            fontSize: 18.sp,
+                            color: ColorTheme().PRIMARY_COLOR,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -515,6 +547,9 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
                                 trailing: GestureDetector(
                                     onTap: () {
                                       setState(() {
+                                        totalStudent -= int.parse(
+                                            courseWiseStudent[index]
+                                                ['TotalStu']);
                                         courseDropdownList.removeAt(index);
                                         courseWiseStudent.removeAt(index);
                                       });
@@ -539,16 +574,53 @@ class _RrDistributionScreenState extends State<RrDistributionScreen> {
 
   Future<void> _selectDateRange(context) async {
     DateTime? picked = await showDatePicker(
-        context: context,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
-        initialDate: DateTime.now());
-
-    selectedDate.text =
-        '${picked?.day.toString().padLeft(2, '0')}-${picked?.month.toString().padLeft(2, '0')}-${picked?.year}';
-    //
-    // if (picked != null) {
-    //   print("Selected Range: ${picked.start} - ${picked.end}");
-    // }
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      initialDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            datePickerTheme: Theme.of(context).datePickerTheme.copyWith(
+                  backgroundColor: Colors.white,
+                  headerBackgroundColor: ColorTheme().PRIMARY_COLOR,
+                  weekdayStyle: TextStyle(
+                      color: ColorTheme().PRIMARY_COLOR,
+                      fontWeight: FontWeight.bold),
+                  headerForegroundColor: ColorTheme().SECONDARY_COLOR,
+                  surfaceTintColor: ColorTheme().PRIMARY_COLOR,
+                  confirmButtonStyle: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(ColorTheme().PRIMARY_COLOR),
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    textStyle: MaterialStateProperty.all(
+                      TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  cancelButtonStyle: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    textStyle: MaterialStateProperty.all(
+                      TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.all(
+                          Radius.circular(5)) // Reduce radius here
+                      ),
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      date = picked;
+      selectedDate.text =
+          '${date?.day.toString().padLeft(2, '0')}-${date?.month.toString().padLeft(2, '0')}-${date?.year}';
+    } else {
+      selectedDate.text =
+          '${date?.day.toString().padLeft(2, '0')}-${date?.month.toString().padLeft(2, '0')}-${date?.year}';
+    }
   }
 }

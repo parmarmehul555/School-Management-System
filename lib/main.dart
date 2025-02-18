@@ -30,10 +30,13 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               radioTheme: RadioThemeData(
-                fillColor: MaterialStateProperty.all(ColorTheme().PRIMARY_COLOR),
+                fillColor:
+                    MaterialStateProperty.all(ColorTheme().PRIMARY_COLOR),
               ),
               scaffoldBackgroundColor: Colors.grey.shade200,
               appBarTheme: AppBarTheme(
+                  elevation: 4,
+                  shadowColor: Colors.grey,
                   color: ColorTheme().PRIMARY_COLOR,
                   titleTextStyle:
                       TextStyle(color: Colors.white, fontSize: 19.sp),

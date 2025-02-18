@@ -17,20 +17,26 @@ class CustomeTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-          isDense: true,
-          prefixIcon: Icon(icon,size: 17.sp,color: iconColor,),
-          hintText: hintText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+    return InkWell(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white
+        ),
+        child: TextFormField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            isDense: true,
+            prefixIcon: Icon(icon,size: 17.sp,color: iconColor,),
+            hintText: hintText,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder()
           ),
         ),
       ),
